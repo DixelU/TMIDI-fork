@@ -112,6 +112,9 @@
 #define IDC_LOOP                        1095
 #define IDC_DEV_TYPE                    1096
 #define IDC_ALL_INSTR                   1096
+
+#define IDC_TEMPO                       1100
+
 #define IDM_FILE_EXIT                   40001
 #define IDM_FILE_OPEN                   40002
 #define ID_HELP_ABOUT                   40003

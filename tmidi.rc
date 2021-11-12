@@ -50,7 +50,7 @@ END
 // Dialog
 //
 
-IDD_MAIN DIALOGEX 0, 0, 297, 236
+IDD_MAIN DIALOGEX 0, 0, 351, 236
 STYLE DS_SETFONT | DS_NOFAILCREATE | DS_CENTER | WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_ACCEPTFILES
 CAPTION "TMIDI: Tom's MIDI Player"
@@ -58,31 +58,27 @@ FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     PUSHBUTTON      "&Open MIDI File",IDC_OPEN,7,209,56,14
     PUSHBUTTON      "&Analysis",IDC_ANALYSIS,66,209,33,14,WS_DISABLED
-    COMBOBOX        IDC_MIDI_OUT,40,3,90,150,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_MIDI_OUT,41,3,112,150,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     LTEXT           "MIDI Out:",IDC_MIDI_OUT_STATIC,7,6,32,8
-    COMBOBOX        IDC_MIDI_IN,197,3,93,150,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "MIDI In:",IDC_MIDI_IN_STATIC,169,6,26,8
-    PUSHBUTTON      "&Play",IDC_PLAY,243,209,15,14,BS_ICON | WS_DISABLED
-    PUSHBUTTON      "&Stop",IDC_STOP,275,209,15,14,BS_ICON | WS_DISABLED
+    COMBOBOX        IDC_MIDI_IN,237,3,104,150,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "MIDI In:",IDC_MIDI_IN_STATIC,210,6,26,8
+    PUSHBUTTON      "&Play",IDC_PLAY,297,209,15,14,BS_ICON | WS_DISABLED
+    PUSHBUTTON      "&Stop",IDC_STOP,331,209,15,14,BS_ICON | WS_DISABLED
     LTEXT           "",IDC_T0,22,33,97,11,SS_NOTIFY
     LTEXT           "",IDC_T1,22,44,97,11,SS_NOTIFY
     LTEXT           "",IDC_T2,22,55,97,11,SS_NOTIFY
     LTEXT           "",IDC_T3,22,66,97,11,SS_NOTIFY
-    LTEXT           "Tempo:",IDC_TICK,196,62,101,10
+    LTEXT           "Tempo:",IDC_TICK,237,63,25,8
     LTEXT           "",IDC_T4,22,77,97,11,SS_NOTIFY
     LTEXT           "",IDC_T5,22,88,97,11,SS_NOTIFY
     LTEXT           "",IDC_T6,22,99,97,11,SS_NOTIFY
     LTEXT           "",IDC_T7,22,110,97,11,SS_NOTIFY
     LTEXT           "",IDC_T8,22,121,97,11,SS_NOTIFY
     LTEXT           "",IDC_T9,22,132,97,11,SS_NOTIFY
-    LTEXT           "Events:",IDC_EVENTSLABEL,196,88,25,8
-    LTEXT           "",IDC_EVENTS,222,88,75,8
-    LTEXT           "Song Length:",IDC_SONGLENLABEL,196,113,44,8
-    LTEXT           "",IDC_SONG_LENGTH,240,113,57,8
-    LTEXT           "Current Time:",IDC_EVENTSLABEL3,196,187,43,8,NOT WS_VISIBLE
-    LTEXT           "Trigger Time:",IDC_EVENTSLABEL4,196,199,42,8,NOT WS_VISIBLE
-    LTEXT           "",IDC_CURRENT_TIME,240,187,50,8,NOT WS_VISIBLE
-    LTEXT           "",IDC_TRIGGER_TIME,240,199,11,8,NOT WS_VISIBLE
+    LTEXT           "Events:",IDC_EVENTSLABEL,237,88,31,8
+    RTEXT           "",IDC_EVENTS,263,88,77,8
+    LTEXT           "Song Length:",IDC_SONGLENLABEL,237,114,48,8
+    RTEXT           "",IDC_SONG_LENGTH,283,114,57,8
     LTEXT           "",IDC_T10,22,143,97,11,SS_NOTIFY
     LTEXT           "",IDC_T11,22,154,97,11,SS_NOTIFY
     LTEXT           "",IDC_T12,22,165,97,11,SS_NOTIFY
@@ -105,26 +101,27 @@ BEGIN
     CONTROL         "14:",IDC_C13,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | BS_NOTIFY | BS_FLAT,7,174,12,11
     CONTROL         "15:",IDC_C14,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | BS_NOTIFY | BS_FLAT,7,185,12,11
     CONTROL         "16:",IDC_C15,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | BS_NOTIFY | BS_FLAT,7,196,12,11
-    PUSHBUTTON      "Pa&use",IDC_PAUSE,259,209,15,14,BS_ICON | WS_DISABLED
-    CONTROL         "Slider1",IDC_SONG_SLIDER,"msctls_trackbar32",WS_TABSTOP,196,123,94,11
-    CONTROL         "Slider1",IDC_EVENT_SLIDER,"msctls_trackbar32",WS_DISABLED | WS_TABSTOP,196,98,94,11
-    LTEXT           "Polyphony:",IDC_POLYPHONY_STATIC,196,23,36,8
-    LTEXT           "",IDC_POLYPHONY,257,23,38,8
-    CONTROL         "Progress1",IDC_POLYPHONY_METER,"msctls_progress32",PBS_SMOOTH | WS_BORDER,233,24,22,7
+    PUSHBUTTON      "Pa&use",IDC_PAUSE,313,209,15,14,BS_ICON | WS_DISABLED
+    CONTROL         "Slider1",IDC_SONG_SLIDER,"msctls_trackbar32",WS_TABSTOP,237,123,109,11
+    CONTROL         "Slider1",IDC_EVENT_SLIDER,"msctls_trackbar32",WS_DISABLED | WS_TABSTOP,237,98,109,11
+    LTEXT           "Polyphony:",IDC_POLYPHONY_STATIC,237,23,42,8
+    RTEXT           "",IDC_POLYPHONY,275,23,35,8
+    CONTROL         "Progress1",IDC_POLYPHONY_METER,"msctls_progress32",PBS_SMOOTH | WS_BORDER,315,23,26,8
     PUSHBUTTON      "Te&xt",IDC_DISPLAY_TEXT,102,209,22,14,WS_DISABLED
-    CTEXT           "",IDC_CURRENT_TEXT,196,137,94,60,SS_NOTIFY
-    CONTROL         "Slider1",IDC_TEMPO_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,196,73,94,11
-    CONTROL         "Slider1",IDC_VELOCITY_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,196,47,44,11
-    CONTROL         "Slider1",IDC_PITCH_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,246,47,44,11
-    LTEXT           "Pitch: 0",IDC_PITCH,246,36,44,8,SS_NOTIFY
-    LTEXT           "Velocity: 0",IDC_VELOCITY,196,36,47,8,SS_NOTIFY
+    CTEXT           "",IDC_CURRENT_TEXT,237,137,108,55,SS_NOTIFY
+    CONTROL         "Slider1",IDC_TEMPO_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,237,73,109,11
+    CONTROL         "Slider1",IDC_VELOCITY_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,237,47,43,11
+    CONTROL         "Slider1",IDC_PITCH_SLIDER,"msctls_trackbar32",TBS_AUTOTICKS | WS_TABSTOP,302,47,44,11
+    LTEXT           "Pitch: 0",IDC_PITCH,302,36,44,8,SS_NOTIFY
+    LTEXT           "Velocity: 0",IDC_VELOCITY,237,36,47,8,SS_NOTIFY
     PUSHBUTTON      "&Tracks",IDC_DISPLAY_TRACKS,127,209,31,14
-    PUSHBUTTON      "&Sysex",IDC_DISPLAY_SYSEX,203,209,31,14,WS_DISABLED
+    PUSHBUTTON      "&Sysex",IDC_DISPLAY_SYSEX,196,209,31,14,WS_DISABLED
     PUSHBUTTON      "&Channels",IDC_DISPLAY_CHANNELS,161,209,38,14
-    CONTROL         IDB_GMLOGO,IDC_MIDI_LOGO,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE | NOT WS_VISIBLE | WS_BORDER,134,3,31,22
-    CONTROL         "Loop",IDC_LOOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,260,197,30,12
-    PUSHBUTTON      "All Instr.",IDC_ALL_INSTR,7,19,27,10
-    COMBOBOX        IDC_CONTROLLERS,40,17,90,150,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         IDB_GMLOGO,IDC_MIDI_LOGO,"Static",SS_BITMAP | SS_NOTIFY | SS_REALSIZEIMAGE | NOT WS_VISIBLE | WS_BORDER,160,6,31,22
+    CONTROL         "Loop",IDC_LOOP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,311,197,30,12
+    PUSHBUTTON      "All Instr.",IDC_ALL_INSTR,7,18,30,12
+    COMBOBOX        IDC_CONTROLLERS,41,17,112,150,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "",IDC_TEMPO,266,63,74,8
 END
 
 IDD_TEXT DIALOG 0, 0, 294, 209
@@ -213,10 +210,10 @@ BEGIN
     IDD_MAIN, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 290
+        RIGHTMARGIN, 346
         VERTGUIDE, 119
-        VERTGUIDE, 196
-        VERTGUIDE, 240
+        VERTGUIDE, 227
+        VERTGUIDE, 237
         TOPMARGIN, 3
         BOTTOMMARGIN, 235
         HORZGUIDE, 209
@@ -270,9 +267,13 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON                ICON                    "tmidi.ico"
+
 IDI_PLAY                ICON                    "play.ico"
+
 IDI_PAUSE               ICON                    "pause.ico"
+
 IDI_STOP                ICON                    "stop.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -280,9 +281,13 @@ IDI_STOP                ICON                    "stop.ico"
 //
 
 IDB_GMLOGO              BITMAP                  "gmlogo.bmp"
+
 IDB_GSLOGO              BITMAP                  "gslogo.bmp"
+
 IDB_XGLOGO              BITMAP                  "xglogo.bmp"
+
 IDB_MTLOGO              BITMAP                  "mtlogo.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -306,6 +311,17 @@ BEGIN
     BEGIN
         MENUITEM "&About...",                   ID_HELP_ABOUT
     END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_MAIN AFX_DIALOG_LAYOUT
+BEGIN
+    0
 END
 
 #endif    // English (United States) resources

@@ -5,7 +5,7 @@
 #define MAKEBYTE(l,h)	((l) | ((h) << 4))
 
 #define MAX_MIDI_WAIT	1000.0f	// Max # of milliseconds to sleep in main playback loop
-#define MAX_MIDI_TRACKS	65536	// Max # of tracks TMIDI will read from a MIDI file
+#define MAX_MIDI_TRACKS	65536   // Max # of tracks TMIDI will read from a MIDI file
 
 #define MAX_PITCH_BEND	0x2000	// Max value for pitch bends (this is a MIDI constant, do not change!)
 
@@ -29,10 +29,10 @@
 //#define BAR_HEIGHT	10
 //#define BAR_VSPACE	18
 
-#define BAR_X		180 //170
+#define BAR_X		193 //170
 #define BAR_Y		51 //79
-#define BAR_WIDTH	93
-#define BAR_HEIGHT	15
+#define BAR_WIDTH	148
+#define BAR_HEIGHT	16
 #define BAR_VSPACE	18
 
 #define MAX_NOTE_HEIGHT		(BAR_HEIGHT - 2)

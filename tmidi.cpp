@@ -14,7 +14,7 @@
 
  */
 
-#define _WIN32_IE 0x0300	// Required for backwards compatibility with comctl32.dll in all Win32 apps!
+//#define _WIN32_IE 0x0300	// Required for backwards compatibility with comctl32.dll in all Win32 apps!
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -891,13 +891,17 @@ void init_midi_out(HWND hwndcb)
 	if (!device)
 		return;
 	device--;
-
-	if (midiOutOpen(&hout, device, NULL, 0, NULL) != MMSYSERR_NOERROR)
-	{
-		hout = NULL;
-		strcpy(msgbuf, "Unable to open MIDI-out device:\n");
-		SendMessage(hwndcb, CB_GETLBTEXT, (WPARAM) device + 1, (LPARAM) (LPCSTR) &msgbuf[strlen(msgbuf)]);
-		MessageBox(hwndApp, msgbuf, "midiOutOpen() failed...", MB_ICONERROR);
+	try {
+		if (midiOutOpen(&hout, device, NULL, 0, NULL) != MMSYSERR_NOERROR)
+		{
+			hout = NULL;
+			strcpy(msgbuf, "Unable to open MIDI-out device:\n");
+			SendMessage(hwndcb, CB_GETLBTEXT, (WPARAM)device + 1, (LPARAM)(LPCSTR)&msgbuf[strlen(msgbuf)]);
+			MessageBox(hwndApp, msgbuf, "midiOutOpen() failed...", MB_ICONERROR);
+		}
+	}
+	catch (...) {
+		MessageBox(hwndApp, msgbuf, "midiOutOpen() horribly failed...\n", MB_ICONERROR);
 	}
 }
 
@@ -2194,10 +2198,6 @@ BeginPlayback:
 				curtime = GetHRTickCount();
 			//sprintf(buf, "Sleeping for %.2f (now = %.2f, next = %.2f)\n", nexttrigger - curtime, curtime, nexttrigger);
 			//OutputDebugString(buf);
-			/*sprintf(buf, "%.1f", curtime);
-			SetDlgItemText(hwndApp, IDC_CURRENT_TIME, buf);
-			sprintf(buf, "%.1f", nexttrigger);
-			SetDlgItemText(hwndApp, IDC_TRIGGER_TIME, buf);*/
 			// Check to see if a pause has been requested
 			if (ms.paused)
 			{
@@ -2248,7 +2248,7 @@ BeginPlayback:
 					ms.peak_polyphony = polyphony;
 					SendDlgItemMessage(hwndApp, IDC_POLYPHONY_METER, PBM_SETRANGE, 0, MAKELPARAM(0, ms.peak_polyphony));
 				}
-				sprintf(buf, "%02d/%02d", polyphony, ms.peak_polyphony);
+				sprintf(buf, "%03d/%03d", polyphony, ms.peak_polyphony);
 				SetDlgItemText(hwndApp, IDC_POLYPHONY, buf);
 				SendDlgItemMessage(hwndApp, IDC_POLYPHONY_METER, PBM_SETPOS, (WPARAM) polyphony, 0);
 				// Update the tracks window, if it's open
@@ -3017,15 +3017,7 @@ void update_display(HDC hdc)
 					// when calculating its position.  If the calculated position is outside
 					// the bar, the loop shifts it up or down by an octive until it's in range.
 					note = j;
-					do
-					{
-						x = BAR_X + (note - 24) * BAR_WIDTH / (96 - 24);
-						if (x > BAR_X + BAR_WIDTH - 1)
-							note -= 12;
-						if (x < BAR_X)
-							note += 12;
-					}
-					while (x > BAR_X + BAR_WIDTH - 1 || x < BAR_X);
+					x = BAR_X + note * BAR_WIDTH / 128;
 					// Mark this channel as having something drawn for it.
 					c->drawn = 1;
 					// Pick color based on instrument
@@ -3395,8 +3387,8 @@ void set_tempo(int new_tempo)
 	if (!ms.analyzing || ms.seeking)
 	{
 		// Update tick length display on the main dialog
-		sprintf(buf, "Tempo: %.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / new_tempo);
-		SetDlgItemText(hwndApp, IDC_TICK, buf);
+		sprintf(buf, "%.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / new_tempo);
+		SetDlgItemText(hwndApp, IDC_TEMPO, buf);
 		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, TRUE, (int) (60000000.0f / new_tempo));
 	}
 
