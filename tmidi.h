@@ -30,10 +30,10 @@
 //#define BAR_VSPACE	18
 
 #define BAR_X		193 //170
-#define BAR_Y		51 //79
+#define BAR_Y		55 //79
 #define BAR_WIDTH	148
-#define BAR_HEIGHT	16
-#define BAR_VSPACE	18
+#define BAR_HEIGHT	18
+#define BAR_VSPACE	19
 
 #define MAX_NOTE_HEIGHT		(BAR_HEIGHT - 2)
 
