@@ -31,6 +31,8 @@
 #include "TMIDI.h"
 #include "resource.h"
 
+#include "bbb_ffio.h"
+
 // Function prototypes
 // Registry functions
 void read_registry_settings(void);
@@ -1056,14 +1058,25 @@ void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwP
 	}
 }
 
+unsigned short read_short(const unsigned char* ptr)
+{
+	return ((*ptr) << 8) | *(ptr + 1);
+};
+
+unsigned int read_int(const unsigned char* ptr)
+{
+	return (read_short(ptr) << 16) | (read_short(ptr + 2));
+};
+
+static bbb_mmap mmap{};
+
 int load_midi(char *filename, HWND hDlg)
 {
-	FILE *infile = NULL, *outfile = NULL;
+	FILE *outfile = NULL;
 	char *MThd = "MThd";
 	char *MTrk = "MTrk";
 	char *RIFF = "RIFF";
 	//unsigned char *text;
-	unsigned char id[4];
 	char buf[1024];
 	unsigned int track = 0, i, len, endtrack = 0;
 	//unsigned int offset, delta, intd;
@@ -1071,6 +1084,8 @@ int load_midi(char *filename, HWND hDlg)
 	//unsigned char lastcmd = 0, cmd, d1, d2, d3, d4, d5;
 	//signed char sd1;
 	int success = 0;
+
+	mmap.reopen_next_file(filename);
 
 	// Save the given filename
 	strcpy(ms.filename, filename);
@@ -1085,8 +1100,8 @@ int load_midi(char *filename, HWND hDlg)
 		for (i = 0; i < mh.num_tracks; i++)
 		{
 			th[i].dataptr = NULL;
-			if (th[i].data)
-				free(th[i].data);
+			//if (th[i].data)
+			//	free(th[i].data);
 			memset(&th[i], 0, sizeof(track_header_t));
 		}
 		free(th);
@@ -1107,7 +1122,7 @@ int load_midi(char *filename, HWND hDlg)
 	}
 
 	// Decide whether or not to perform pre-analysis
-	ms.perform_analysis = 0;
+	ms.perform_analysis = 1;
 
 	if (ms.perform_analysis)
 	{
@@ -1118,8 +1133,8 @@ int load_midi(char *filename, HWND hDlg)
 			return 1;
 		}
 	}
-	infile = fopen(filename, "rb");
-	if (!infile)
+
+	if (!mmap.good())
 	{
 		MessageBox(hwndApp, "Unable to open file for reading.", filename, MB_ICONERROR);
 		return 1;
@@ -1127,14 +1142,7 @@ int load_midi(char *filename, HWND hDlg)
 
 	if (strlen(filename) > 4 && stristr(&filename[strlen(filename) - 4], ".SYX"))
 	{
-		handle_sysex_dump(infile);
-		// Disable the "Display Analysis" button
-		EnableWindow(GetDlgItem(hwndApp, IDC_ANALYSIS), FALSE);
-		// Disable the "Display Text" button
-		EnableWindow(GetDlgItem(hwndApp, IDC_DISPLAY_TEXT), FALSE);
-		// Disable playback control button
-		EnableWindow(GetDlgItem(hwndApp, IDC_PLAY), FALSE);
-
+		MessageBox(hwndApp, "All the sysex go to hell.", filename, MB_ICONERROR);
 		return 1;
 	}
 
@@ -1143,66 +1151,22 @@ int load_midi(char *filename, HWND hDlg)
 	if (ms.perform_analysis)
 		fprintf(outfile, "Analysis of %s\n\n", filename);
 
-	// Read the MIDI file header
-	read_bytes(infile, id, 4);
+	const unsigned char* begining = mmap.begin();
 
 	// Check to see if the "MThd" ID is correct
-	if (memcmp(MThd, id, 4))
+	if (memcmp(MThd, begining, 4))
 	{
-		// No?  Check for a RIFF header (RMID format)
-		if (!memcmp(RIFF, id, 4))
-		{
-			// Yes!  Ok, skip past 4 byte filesize + 4 byte RMID
-			read_bytes(infile, id, 4);
-			read_bytes(infile, id, 4);
-			read_bytes(infile, id, 4);
-			read_bytes(infile, id, 4);
-			// Now read the MIDI file header
-			read_bytes(infile, id, 4);
-			// Now look for MThd
-			if (memcmp(MThd, id, 4))
-			{
-				sprintf(buf, "'%s' is not a MIDI file because it does not begin with \"MThd\".", filename);
-				if (ms.perform_analysis)
-					fprintf(outfile, "%s\n", buf);
-				MessageBox(hwndApp, buf, "TMIDI Error", MB_ICONERROR);
-				return 1;
-			}			
-		}
-		else
-		{
-			// STILL no MThd?  Search through the beginning of the file for MThd
-			fseek(infile, 0, SEEK_SET);
-			len = fread(buf, 1, sizeof(buf), infile);
-			if (len > 4)
-				for (i = 0; i < len - 4; i++)
-					if (!memcmp(MThd, &buf[i], 4))
-						break;
-			if (len <= 4 || i == len - 4)
-			{
-				sprintf(buf, "'%s' is not a MIDI file because it does not begin with \"MThd\".", filename);
-				if (ms.perform_analysis)
-					fprintf(outfile, "%s\n", buf);
-				MessageBox(hwndApp, buf, "TMIDI Error", MB_ICONERROR);
-				return 1;
-			}
-			else
-			{
-				fseek(infile, i, SEEK_SET);
-				read_bytes(infile, id, 4);
-				if (ms.perform_analysis)
-					fprintf(outfile, "Warning: File is damaged... %d bytes of unexpected data before MThd header.\n", i);
-			}
-		}
+		MessageBox(hwndApp, "Non \"MThd\" midi files are not supported.", filename, MB_ICONERROR);
+		return 1;
 	}
 
 	// Read the header size
-	mh.header_size = read_int(infile);
+	mh.header_size = read_int(begining + 4);
 	if (ms.perform_analysis)
 		fprintf(outfile, "Header size: %d bytes\n", mh.header_size);
 
 	// Identify the file format
-	mh.file_format = read_short(infile);
+	mh.file_format = read_short(begining + 8);
 	if (ms.perform_analysis)
 	{
 		fprintf(outfile, "File format: ");
@@ -1219,8 +1183,8 @@ int load_midi(char *filename, HWND hDlg)
 	}
 
 	// Output other information present in the header
-	mh.num_tracks = read_short(infile);
-	mh.num_ticks = read_short(infile);
+	mh.num_tracks = read_short(begining + 10);
+	mh.num_ticks = read_short(begining + 12);
 	if (ms.perform_analysis)
 	{
 		fprintf(outfile, "Number of tracks: %d\n", mh.num_tracks);
@@ -1230,14 +1194,18 @@ int load_midi(char *filename, HWND hDlg)
 	// Allocate track headers
 	th = (track_header_t *)calloc(mh.num_tracks, sizeof(track_header_t));
 
+	mmap.seekg(14);
 	// Read tracks
-	while (!feof(infile))
+	while (!mmap.eof())
 	{
+		auto track_begin = mmap.ptr();
+		mmap.seekg(mmap.tellg() + 8);
 		// Read the track header
-		if (!read_bytes(infile, id, 4))
+		if (mmap.eof())
 			continue;
+
 		// Check to see if the "MTrk" ID is correct
-		if (memcmp(MTrk, id, 4))
+		if (memcmp(MTrk, track_begin, 4))
 		{
 			if (ms.perform_analysis)
 				fprintf(outfile, "Track header %d is not correct because it does not begin with \"MTrk\".\n", track + 1);
@@ -1249,297 +1217,14 @@ int load_midi(char *filename, HWND hDlg)
 			break;
 		}
 		// Read track length in bytes
-		th[track].length = read_int(infile);
+		th[track].length = read_int(track_begin + 4);
 		if (ms.perform_analysis)
 			fprintf(outfile, "\n---- Track %d (%d bytes) ----\n\n", track + 1, th[track].length);
 
 		// Read the track data into memory
-		th[track].data = (unsigned char *) malloc(th[track].length);
-		if (!th[track].data)
-		{
-			MessageBox(hwndApp, "malloc() failed trying to allocate memory for track data", "TMIDI Error", MB_ICONERROR);
-			break;
-		}
-		fread(th[track].data, th[track].length, 1, infile);
-/*		fseek(infile, -1 * (signed int) th[track].length, SEEK_CUR);
+		th[track].data = const_cast<unsigned char*>(track_begin + 8);
+		mmap.seekg(mmap.tellg() + th[track].length);
 
-		// Read MIDI events
-		offset = 0;
-		endtrack = 0;
-		while (!feof(infile) && !endtrack)
-		{
-			// Read a delta time
-			delta = read_vlq(infile, &offset);
-
-			if (ms.perform_analysis)
-				fprintf(outfile, "DT: %4d - ", delta);
-
-			// Read the MIDI event command
-			cmd = fgetc(infile);
-			offset++;
-
-			// Handle running mode
-			if (cmd < 128)
-			{
-				ungetc(cmd, infile);
-				offset--;
-				cmd = lastcmd;
-			}
-			else
-				lastcmd = cmd;
-
-			if (cmd == 0xFF)		// Meta-event
-			{
-				cmd = fgetc(infile);
-				offset++;
-				len = read_vlq(infile, &offset);
-				text = NULL;
-				switch (cmd)
-				{
-					case 0x00:		// Sequence number
-						intd = read_short(infile);
-						offset += 2;
-						if (ms.perform_analysis)
-							fprintf(outfile, "Set Sequence number: %d\n", intd);
-						break;
-					case 1:		// Text
-					case 2:		// Copyright info
-					case 3:		// Sequence or track name
-					case 4:		// Track instrument name
-					case 5:		// Lyric
-					case 6:		// Marker
-					case 7:		// Cue point
-						strcpy(eventname, midi_text_event_descriptions[cmd]);
-						text = (unsigned char *) malloc(len + 1);
-						read_bytes(infile, text, len);
-						offset += len;
-						text[len] = '\0';
-						if (ms.perform_analysis)
-						{
-							fprintf(outfile, "%s: ", eventname);
-							fputs((const char *) text, outfile);
-							fprintf(outfile, "\n");
-						}
-						break;
-					case 0x20:		// MIDI Channel prefix
-						d1 = fgetc(infile);
-						offset++;
-						if (ms.perform_analysis)
-							fprintf(outfile, "MIDI Channel Prefix: %d\n", d1);
-						break;
-					case 0x21:		// MIDI Port
-						d1 = fgetc(infile);
-						offset++;
-						if (ms.perform_analysis)
-							fprintf(outfile, "MIDI Port: %d\n", d1);
-						break;
-					case 0x2F:		// End of track
-						if (ms.perform_analysis)
-							fprintf(outfile, "End of track\n");
-						offset = th[track].length;
-						endtrack = 1;
-						continue;
-					case 0x51:		// Set tempo
-						read_bytes(infile, id, 3);
-						offset += 3;
-						intd = (id[0] << 16) + (id[1] << 8) + id[2];
-						if (ms.perform_analysis)
-							fprintf(outfile, "Set tempo: %d (%02X %02X %02X) - %.2fms\n", intd, id[0], id[1], id[2], 
-								(double) (intd / 1000) / (double) mh.num_ticks);
-						break;
-					case 0x54:		// SMPTE Offset
-						d1 = fgetc(infile);
-						d2 = fgetc(infile);
-						d3 = fgetc(infile);
-						d4 = fgetc(infile);
-						d5 = fgetc(infile);
-						offset += 5;
-						if (ms.perform_analysis)
-							fprintf(outfile, "SMPTE Offset: %d:%02d:%02d.%02d.%02d\n", d1, d2, d3, d4, d5);
-						break;
-					case 0x58:		// Time signature
-						d1 = fgetc(infile);
-						d2 = fgetc(infile);
-						d3 = fgetc(infile);
-						d4 = fgetc(infile);
-						offset += 4;
-						if (ms.perform_analysis)
-							fprintf(outfile, "Time signature: %d/%d, %d ticks in metronome click, %d 32nd notes to quarter note, %d quarter notes per measure\n", d1, d2, d3, d4, (4 * d1) / d2);
-						break;
-					case 0x59:		// Key signature
-						sd1 = fgetc(infile);
-						d2 = fgetc(infile);
-						offset += 2;
-						if (ms.perform_analysis)
-						{
-							fprintf(outfile, "Key signature: ");
-							if (sd1 < 0)
-								fprintf(outfile, "%d flats, ", 0 - sd1);
-							else
-								if (sd1 > 0)
-									fprintf(outfile, "%d sharps, ", sd1);
-								else
-									fprintf(outfile, "Key of C, ");
-							fprintf(outfile, d2 ? "minor\n" : "major\n");
-						}
-						break;
-					case 0x7F:		// Sequencer-specific information
-						if (ms.perform_analysis)
-						{
-							fprintf(outfile, "Sequencer-specific information, %d bytes: ", len);
-							for (i = 0; i < len; i++)
-								fputc(fgetc(infile), outfile);
-							offset += len;
-							fprintf(outfile, "\n");
-						}
-						else
-						{
-							for (i = 0; i < len; i++)
-								fgetc(infile);
-							offset += len;
-						}
-						break;
-					default:		// Unknown
-						if (ms.perform_analysis)
-						{
-							fprintf(outfile, "Meta-event, unknown command %X length %d: ", cmd, len);
-							for (i = 0; i < len; i++)
-								fputc(fgetc(infile), outfile);
-							offset += len;
-							fprintf(outfile, "\n");
-						}
-						else
-						{
-							for (i = 0; i < len; i++)
-								fgetc(infile);
-							offset += len;
-						}
-				}
-				if (text)
-				{
-					free(text);
-					text = NULL;
-				}
-			}
-			else
-			switch (HINYBBLE(cmd))	// Normal event
-			{
-				case 0x08: // Note off
-					d1 = fgetc(infile);
-					d2 = fgetc(infile);
-					offset += 2;
-					if (ms.perform_analysis)
-						fprintf(outfile, "Note Off, note %d velocity %d\n", d1, d2);
-					break;
-				case 0x09: // Note on
-					d1 = fgetc(infile);
-					d2 = fgetc(infile);
-					offset += 2;
-					if (ms.perform_analysis)
-						fprintf(outfile, "Note On, note %d velocity %d\n", d1, d2);
-					if (LONYBBLE(cmd) == 9)
-						ms.uses_percussion = 1;
-					break;
-				case 0x0A: // Key after-touch
-					d1 = fgetc(infile);
-					d2 = fgetc(infile);
-					offset += 2;
-					if (ms.perform_analysis)
-						fprintf(outfile, "Key After-touch, note %d velocity %d\n", d1, d2);
-					break;
-				case 0x0B: // Control Change
-					d1 = fgetc(infile);
-					d2 = fgetc(infile);
-					offset += 2;
-					if (ms.perform_analysis)
-						fprintf(outfile, "Control Change, controller %d value %d\n", d1, d2);
-					break;
-				case 0x0C: // Program Change
-					d1 = fgetc(infile);
-					offset++;
-					if (ms.perform_analysis)
-					{
-						fprintf(outfile, "Program Change, program %d", d1);
-						if (LONYBBLE(cmd) != 9)
-							fprintf(outfile, " (%s)\n", get_program_name(d1));
-						else
-							fprintf(outfile, "\n");
-					}
-					break;
-				case 0x0D: // Channel after-touch
-					d1 = fgetc(infile);
-					offset++;
-					if (ms.perform_analysis)
-						fprintf(outfile, "Channel After-touch, channel %d\n", d1);
-					break;
-				case 0x0E: // Pitch wheel
-					intd = read_short(infile);
-					offset += 2;
-					if (ms.perform_analysis)
-						fprintf(outfile, "Pitch Wheel, amount %d\n", intd);
-					break;
-				case 0x0F: // System message
-					switch (LONYBBLE(cmd))
-					{
-						case 0x02:
-							d1 = fgetc(infile);
-							d2 = fgetc(infile);
-							offset += 2;
-							intd = (d2 << 8) + d1;
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Song position: %d\n", intd);
-						case 0x03:
-							d1 = fgetc(infile);
-							offset++;
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Song select: %d\n", d1);
-						case 0x06:
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Tune request\n");
-							break;
-						case 0x00:
-						case 0x07:
-							len = read_vlq(infile, &offset);
-							if (ms.perform_analysis)
-							{
-								fprintf(outfile, "SysEx Data, length %d: %02X ", len, cmd);
-								for (i = 0; i < len; i++)
-									fprintf(outfile, "%02X ", fgetc(infile));
-								fprintf(outfile, "\n");
-							}
-							else
-								for (i = 0; i < len; i++)
-									fgetc(infile);
-							offset += len;
-							break;
-						case 0x08:
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Timing clock used when synchronization is required.\n");
-							break;
-						case 0x0A:
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Start current sequence\n");
-							break;
-						case 0x0B:
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Continue a stopped sequence where left off\n");
-							break;
-						case 0x0C:
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Stop a sequence\n");
-							break;
-						default:
-							if (ms.perform_analysis)
-								fprintf(outfile, "System Message: Unknown (%d)\n", LONYBBLE(cmd));
-					}
-					break;
-				default:
-					if (ms.perform_analysis)
-						fprintf(outfile, "Unknown Message (%d)\n", HINYBBLE(cmd));
-					fgetc(infile);
-					offset++;
-			}
-		}*/
 		track++;
 		if (track >= MAX_MIDI_TRACKS)
 		{
@@ -1549,7 +1234,7 @@ int load_midi(char *filename, HWND hDlg)
 		}
 	}
 	success = 1;
-
+	mmap.seekg(0);
 	}
 	__finally
 	{
@@ -1559,8 +1244,6 @@ int load_midi(char *filename, HWND hDlg)
 			//MessageBox(hwndApp, buf, "Warning", MB_ICONWARNING);
 			mh.num_tracks = track;
 		}
-		if (infile)
-			fclose(infile);
 		if (outfile)
 			fclose(outfile);
 		if (success)
