@@ -171,7 +171,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		if (fnptr[strlen(fnptr) - 1] == '\"')
 			fnptr[strlen(fnptr) - 1] = '\0';
 		// Check to see if another instance of the program is running
-		hwnd = FindWindow(NULL, "TMIDI: Tom's MIDI Player");
+		hwnd = FindWindow(NULL, "TMIDI: Tom's MIDI Player (MMAP edition)");
 		cds.dwData = IPC_PLAY;
 		cds.cbData = strlen(fnptr) + 1;
 		cds.lpData = fnptr;
