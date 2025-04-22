@@ -177,7 +177,7 @@ typedef struct midi_state_t {
 	unsigned int tempo;					// Current tempo
 	double tick_length;					// Current tick length in milliseconds
 	int song_length;					// Length of song in seconds
-	int num_events;						// Number of MIDI events in song
+	long long int num_events;			// Number of MIDI events in song
 	int peak_polyphony;					// Peak polyphony seen throughout the song
 	int uses_percussion;				// Does this MIDI file use percussion? (channel 10)
 	int highest_pitch_bend;				// Highest pitch bend used in song (used in pitch bend visualization calculations)

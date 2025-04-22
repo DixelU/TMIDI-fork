@@ -28,6 +28,8 @@
 #include <math.h>
 #include <assert.h>
 
+#include <chrono>
+
 #include "TMIDI.h"
 #include "resource.h"
 
@@ -943,7 +945,7 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 	unsigned char channel = chan;
 
 	// Perform global velocity modulation
-	if (velocity && ms.mod_velocity)
+	if (velocity && ms.mod_velocity) [[unlikely]]
 	{
 		i = (signed int) velocity;
 		i += ms.mod_velocity;
@@ -954,7 +956,7 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 		velocity = (unsigned char) i;
 	}
 	// Perform global pitch modulation
-	if (channel != 9 && ms.channels[channel].last_bank != 127)
+	if (channel != 9 && ms.channels[channel].last_bank != 127) [[unlikely]]
 		note += ms.mod_pitch;
 
 	// Update display/historic values
@@ -968,7 +970,7 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 
 	// If the bank for this channel is 127, treat it as a percussive channel! (XG)
 	// This needs to be an option, in case someone actually has a real XG synth.
-	if (ms.midi_standard == MIDI_STANDARD_XG && ms.channels[channel].last_bank == 127)
+	if (ms.midi_standard == MIDI_STANDARD_XG && ms.channels[channel].last_bank == 127) [[unlikely]]
 		channel = 9;
 
 	dwParam1 = MAKELONG(MAKEWORD(MAKEBYTE(channel, on ? 9 : 8), note), MAKEWORD(velocity, 0));
@@ -1721,22 +1723,33 @@ inline unsigned int read_vlq_mem(track_header_t *th)
 
 inline double GetHRTickCount(void)
 {
-	double d;
+	constexpr bool use_winapi = false;
 
-	timeBeginPeriod(1); 
-	d = (double) timeGetTime();
-	timeEndPeriod(1);
-	return d;
+	if (use_winapi)
+	{
+		double d;
 
-	//QueryPerformanceCounter(&LIms_time);
-	//return (double) (LIms_time.QuadPart / freq);
+		timeBeginPeriod(1); 
+		d = (double) timeGetTime();
+		timeEndPeriod(1);
+
+		return d;
+	}
+	else
+	{
+		static const auto begining = std::chrono::steady_clock::now();
+
+		auto now = std::chrono::steady_clock::now();
+
+		return std::chrono::duration_cast<std::chrono::microseconds>(now - begining).count() * 0.001;
+	}
 }
 
 int analyze_midi(void)
 {
 	int tracks = mh.num_tracks;
 	int i, j;
-	int num_events = 0;
+	long long int num_events = 0;
 	double curtime, starttime;
 	double nexttrigger;
 	double start_analyze, end_analyze;
@@ -1973,7 +1986,7 @@ void __cdecl playback_thread(void *spointer)
 {
 	int tracks = mh.num_tracks;
 	int i, j, polyphony, elapsed;
-	int num_events;
+	long long int num_events;
 	double curtime, starttime, pausetime, tmptime, timediff, displaytime;
 	double nexttrigger;
 	char buf[256];
@@ -2227,7 +2240,7 @@ BeginPlayback:
 			{
 				displaytime = curtime;
 				// Set song current MIDI events / total MIDI events text
-				sprintf(buf, "%d / %d", num_events, ms.num_events);
+				sprintf(buf, "%llu / %llu", num_events, ms.num_events);
 				SetDlgItemText(hwndApp, IDC_EVENTS, buf);
 				// Set MIDI events position slider
 				SendDlgItemMessage(hwndApp, IDC_EVENT_SLIDER, TBM_SETPOS, TRUE, num_events / 10);
@@ -2366,7 +2379,7 @@ BeginPlayback:
 	SetDlgItemText(hwndApp, IDC_EVENTS, "");
 	// Set MIDI events position slider
 	num_events = 0;
-	sprintf(buf, "%d / %d", num_events, ms.num_events);
+	sprintf(buf, "%llu / %llu", num_events, ms.num_events);
 	SetDlgItemText(hwndApp, IDC_EVENTS, buf);
 	SendDlgItemMessage(hwndApp, IDC_EVENT_SLIDER, TBM_SETPOS, TRUE, 0);
 	// Set song current time / total time text
