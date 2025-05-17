@@ -29,6 +29,8 @@
 #include <assert.h>
 
 #include <chrono>
+#include <atomic>
+#include <thread>
 
 #include "TMIDI.h"
 #include "resource.h"
@@ -1982,10 +1984,83 @@ int analyze_midi(void)
 	return 0;
 }
 
+struct shared_global_dguiu_state
+{
+	std::uint32_t elapsed = 0;
+	double starttime = 0;
+
+	std::atomic_bool running = false;
+	std::atomic_bool seeking = false;
+	std::atomic<double> current = 0;
+	std::atomic<double> displaytime = 0;
+	std::atomic_uint64_t num_events = 0;
+
+	void zero()
+	{
+		elapsed = 0;
+		starttime = 0;
+		seeking = false;
+		current = 0;
+		displaytime = 0;
+		num_events = 0;
+	}
+};
+shared_global_dguiu_state global_state;
+
+void deferred_gui_update_call()
+{
+	if (!global_state.running || global_state.seeking)
+		return;
+
+	char buf[256];
+	auto displaytime = global_state.current.load();
+	auto num_events = global_state.num_events.load();
+
+	global_state.displaytime = displaytime;
+
+	// Set song current MIDI events / total MIDI events text
+	sprintf(buf, "%llu / %llu", num_events, ms.num_events);
+	SetDlgItemText(hwndApp, IDC_EVENTS, buf);
+	// Set MIDI events position slider
+	SendDlgItemMessage(hwndApp, IDC_EVENT_SLIDER, TBM_SETPOS, TRUE, num_events / 10);
+	// Set song current time / total time text
+	global_state.elapsed = (int)((global_state.current - global_state.starttime) / 1000.0f);
+	if (!ms.seek_sliding)
+	{
+		sprintf(buf, "%d:%02d / %d:%02d", global_state.elapsed / 60, global_state.elapsed % 60, ms.song_length / 60, ms.song_length % 60);
+		SetDlgItemText(hwndApp, IDC_SONG_LENGTH, buf);
+		// Set song position slider
+		SendDlgItemMessage(hwndApp, IDC_SONG_SLIDER, TBM_SETPOS, TRUE, global_state.elapsed);
+	}
+	// Calculate and display polyphony
+	uint64_t polyphony, i;
+	for (polyphony = i = 0; i < 16; i++)
+		polyphony += ms.channels[i].note_count;
+
+	if (polyphony > ms.peak_polyphony)
+	{
+		ms.peak_polyphony = polyphony;
+		SendDlgItemMessage(hwndApp, IDC_POLYPHONY_METER, PBM_SETRANGE, 0, MAKELPARAM(0, ms.peak_polyphony));
+	}
+
+	sprintf(buf, "%03llu/%03d", polyphony, ms.peak_polyphony);
+	SetDlgItemText(hwndApp, IDC_POLYPHONY, buf);
+	SendDlgItemMessage(hwndApp, IDC_POLYPHONY_METER, PBM_SETPOS, (WPARAM)polyphony, 0);
+	// Update the tracks window, if it's open
+	if (hwndTracks)
+		FillTracksListView(GetDlgItem(hwndTracks, IDC_TRACKS_LIST));
+	// Update the channels window, if it's open
+	if (hwndChannels)
+		FillChannelsListView(GetDlgItem(hwndChannels, IDC_CHANNELS_LIST));
+	// Update graphical display
+	update_display(NULL);
+}
+
 void __cdecl playback_thread(void *spointer)
 {
 	int tracks = mh.num_tracks;
-	int i, j, polyphony, elapsed;
+	int i, j, polyphony;
+	auto& elapsed = global_state.elapsed;
 	long long int num_events;
 	double curtime, starttime, pausetime, tmptime, timediff, displaytime;
 	double nexttrigger;
@@ -2061,6 +2136,15 @@ void __cdecl playback_thread(void *spointer)
 	// Initialize loop count
 	ms.loop_count = 1;
 
+	global_state.running = true;
+	std::thread thread([]() {
+		while (global_state.running)
+		{
+			deferred_gui_update_call();
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		}
+	});
+
 	while (ms.loop_count--)
 	{
 BeginPlayback:
@@ -2129,6 +2213,8 @@ BeginPlayback:
 			th[i].dataptr = th[i].data;
 			th[i].tracknum = i;
 		}
+
+		global_state.zero();
 
 		// Record starting time
 		ms.starttime = starttime = curtime = displaytime = GetHRTickCount();
@@ -2236,47 +2322,18 @@ BeginPlayback:
 					th[i].trigger += curtime - pausetime;
 			}
 
-			if (!seeking && curtime - displaytime > 20)
+			if (!seeking)
 			{
-				displaytime = curtime;
-				// Set song current MIDI events / total MIDI events text
-				sprintf(buf, "%llu / %llu", num_events, ms.num_events);
-				SetDlgItemText(hwndApp, IDC_EVENTS, buf);
-				// Set MIDI events position slider
-				SendDlgItemMessage(hwndApp, IDC_EVENT_SLIDER, TBM_SETPOS, TRUE, num_events / 10);
-				// Set song current time / total time text
-				elapsed = (int) ((curtime - starttime) / 1000.0f);
-				if (!ms.seek_sliding)
-				{
-					sprintf(buf, "%d:%02d / %d:%02d", elapsed / 60, elapsed % 60, ms.song_length / 60, ms.song_length % 60);
-					SetDlgItemText(hwndApp, IDC_SONG_LENGTH, buf);
-					// Set song position slider
-					SendDlgItemMessage(hwndApp, IDC_SONG_SLIDER, TBM_SETPOS, TRUE, elapsed);
-				}
-				// Calculate and display polyphony
-				for (polyphony = i = 0; i < 16; i++)
-					polyphony += ms.channels[i].note_count;
-				if (polyphony > ms.peak_polyphony)
-				{
-					ms.peak_polyphony = polyphony;
-					SendDlgItemMessage(hwndApp, IDC_POLYPHONY_METER, PBM_SETRANGE, 0, MAKELPARAM(0, ms.peak_polyphony));
-				}
-				sprintf(buf, "%03d/%03d", polyphony, ms.peak_polyphony);
-				SetDlgItemText(hwndApp, IDC_POLYPHONY, buf);
-				SendDlgItemMessage(hwndApp, IDC_POLYPHONY_METER, PBM_SETPOS, (WPARAM) polyphony, 0);
-				// Update the tracks window, if it's open
-				if (hwndTracks)
-					FillTracksListView(GetDlgItem(hwndTracks, IDC_TRACKS_LIST));
-				// Update the channels window, if it's open
-				if (hwndChannels)
-					FillChannelsListView(GetDlgItem(hwndChannels, IDC_CHANNELS_LIST));
-				// Update graphical display
-				update_display(NULL);
+				global_state.seeking = false;
+				global_state.current = curtime;
+				global_state.num_events = num_events;
+				global_state.starttime = starttime;
 			}
 
 			// Wait until the next trigger time
 			if (seeking)
 			{
+				global_state.seeking = true;
 				curtime = nexttrigger;
 				// See if the seek is done
 				if (seeking && (curtime - starttime >= ms.seek_to))
@@ -2345,7 +2402,11 @@ BeginPlayback:
 	// PLAYBACK HAS STOPPED
 	// Turn off all the notes, reset the MIDI-out device, and close it
 	all_notes_off();
-	Sleep(50);
+
+	global_state.running = false;
+	if (thread.joinable())
+		thread.join();
+
 	midiOutReset(hout);
 	close_midi_out();
 
