@@ -21,6 +21,7 @@
 #include <commctrl.h>
 #include <process.h>
 #include <winsock.h>
+#include <libloaderapi.h>
 
 #include <stdio.h>
 #include <ctype.h>
@@ -151,6 +152,39 @@ INT_PTR CALLBACK OutConfigDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
 WNDPROC OldButtonProc;
 LRESULT CALLBACK NewButtonProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
+BOOL(WINAPI* KDMAPIStatus)() = 0;
+VOID(WINAPI* kShortMsg)(DWORD msg) = 0;
+
+VOID WINAPI _DefaultOutShortMsg(DWORD msg)
+{
+	// Pass the MIDI event to the Keppy's Direct MIDI call, and return the WinMM result
+	midiOutShortMsg(hout, msg);
+}
+
+int InitKDMAPI()
+{
+	kShortMsg = _DefaultOutShortMsg;
+
+	BOOL(WINAPI * KDMAPIStatus)() = 0;
+	auto moduleHandle = GetModuleHandle("OmniMIDI");
+
+	if (!moduleHandle)
+		return 2;
+
+	KDMAPIStatus = (decltype(KDMAPIStatus))GetProcAddress(moduleHandle, "IsKDMAPIAvailable");
+	if (!KDMAPIStatus || !KDMAPIStatus())
+		return 1;
+
+	kShortMsg = (decltype(kShortMsg))GetProcAddress(moduleHandle, "SendDirectData");
+	if (!kShortMsg)
+	{
+		kShortMsg = _DefaultOutShortMsg;
+		return 1;
+	}
+
+	return 0;
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
 				   PSTR szCmdLine, int iCmdShow)
 {
@@ -217,6 +251,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	// Initialize GDI resources
 	init_gdi_resources();
+
 
 	// Show the main program dialog
 	DialogBox(ghInstance, MAKEINTRESOURCE(IDD_MAIN), NULL, (DLGPROC) MainDlg);
@@ -896,6 +931,7 @@ void init_midi_out(HWND hwndcb)
 	midi_out_cb = device = SendMessage(hwndcb, CB_GETCURSEL, 0, 0);
 	if (!device)
 		return;
+
 	device--;
 	try {
 		if (midiOutOpen(&hout, device, NULL, 0, NULL) != MMSYSERR_NOERROR)
@@ -905,6 +941,8 @@ void init_midi_out(HWND hwndcb)
 			SendMessage(hwndcb, CB_GETLBTEXT, (WPARAM)device + 1, (LPARAM)(LPCSTR)&msgbuf[strlen(msgbuf)]);
 			MessageBox(hwndApp, msgbuf, "midiOutOpen() failed...", MB_ICONERROR);
 		}
+
+		InitKDMAPI();
 	}
 	catch (...) {
 		MessageBox(hwndApp, msgbuf, "midiOutOpen() horribly failed...\n", MB_ICONERROR);
@@ -934,10 +972,13 @@ void close_midi_out(void)
 		midiOutReset(hout);
 		while (midiOutClose(hout) != MMSYSERR_NOERROR && i++ < 10)
 			Sleep(200);
+
 		if (i == 10)
 		{
 			MessageBox(hwndApp, "Unable to close MIDI-out device!", "TMIDI Error", MB_ICONERROR);
 		}
+
+		kShortMsg = _DefaultOutShortMsg;
 		hout = NULL;
 	}
 }
@@ -979,7 +1020,7 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 
 	dwParam1 = MAKELONG(MAKEWORD(MAKEBYTE(channel, on ? 9 : 8), note), MAKEWORD(velocity, 0));
 	if (hout)
-		midiOutShortMsg(hout, dwParam1);
+		kShortMsg(dwParam1);
 }
 
 // Turns all notes off on a specific channel
@@ -992,9 +1033,9 @@ void all_notes_off_channel(int channel)
 	if (hout)
 	{
 		// Better safe than sorry!
-		midiOutShortMsg(hout, MAKELONG(MAKEWORD(0xB0 + channel, 120), MAKEWORD(0, 0)));
-		midiOutShortMsg(hout, MAKELONG(MAKEWORD(0xB0 + channel, 121), MAKEWORD(0, 0)));
-		midiOutShortMsg(hout, MAKELONG(MAKEWORD(0xB0 + channel, 123), MAKEWORD(0, 0)));
+		kShortMsg(MAKELONG(MAKEWORD(0xB0 + channel, 120), MAKEWORD(0, 0)));
+		kShortMsg(MAKELONG(MAKEWORD(0xB0 + channel, 121), MAKEWORD(0, 0)));
+		kShortMsg(MAKELONG(MAKEWORD(0xB0 + channel, 123), MAKEWORD(0, 0)));
 	}
 }
 
@@ -1039,15 +1080,15 @@ void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwP
 					ms.channels[channel].last_controller_value = byte2;
 					if (byte1 == 0)
 						ms.channels[channel].last_bank = byte2;
-					midiOutShortMsg(hout, dwParam1);
+					kShortMsg(dwParam1);
 					break;
 				case 0x0C:	// Program change
 					ms.channels[channel].last_program = byte1;
-					midiOutShortMsg(hout, dwParam1);
+					kShortMsg(dwParam1);
 					break;
 				default:
 					//OutputDebugString("Sending data\n");
-					midiOutShortMsg(hout, dwParam1);
+					kShortMsg(dwParam1);
 			}
 			if (hwndChannels)
 				PostMessage(hwndChannels, WMAPP_REFRESH_CHANNELS, 0, 0);
@@ -1057,7 +1098,7 @@ void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwP
 		default:
 //			printf("Unknown MIDI IN message: %d - %d - %d\n", wMsg, dwParam1, dwParam2);
 			if (hout)
-				midiOutShortMsg(hout, dwParam1);
+				kShortMsg(dwParam1);
 //			send_midi_data(dwParam1);
 	}
 }
@@ -1671,6 +1712,7 @@ struct shared_global_dguiu_state
 {
 	std::uint32_t elapsed = 0;
 	double starttime = 0;
+	bool enable_sleep = false;
 
 	std::atomic_bool running = false;
 	std::atomic_bool seeking = false;
@@ -1700,6 +1742,8 @@ void deferred_gui_update_call()
 	auto num_events = global_state.num_events.load();
 
 	global_state.displaytime = displaytime;
+
+	global_state.enable_sleep = IsDlgButtonChecked(hwndApp, IDC_ALLOWSLEEP);
 
 	// Set song current MIDI events / total MIDI events text
 	sprintf(buf, "%llu / %llu", num_events, ms.num_events);
@@ -2052,7 +2096,7 @@ BeginPlayback:
 			else
 			{
 				//i = 0;
-				while (curtime < nexttrigger && !(ms.stop_requested))
+				while (global_state.enable_sleep && curtime < nexttrigger && !(ms.stop_requested))
 				{
 					uint64_t microseconds = (nexttrigger - curtime) * 1000;
 #ifdef _DEBUG
@@ -2060,14 +2104,7 @@ BeginPlayback:
 					OutputDebugString(buf);
 #endif
 					std::this_thread::sleep_for(std::chrono::microseconds(microseconds));
-					//Sleep(5);
 					curtime = GetHRTickCount();
-					//i++;
-					//if ((i % 1000) == 0)
-					//{
-					//	sprintf(buf, "curtime = %.1f, nexttrigger = %.1f, loop count = %d", curtime, nexttrigger, i);
-					//	SetWindowText(hwndStatusBar, buf);
-					//}
 				}
 				if (!tracks_active)
 				{
@@ -2351,7 +2388,7 @@ int process_midi_event(track_header_t *th)
 				if (!ms.analyzing)
 				{
 					note_on(FALSE, d1, d2, channel);
-					//midiOutShortMsg(hout, MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
+					//kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 					/*sprintf(buf, "Note off, d1 = %d, d2 = %d\n", d1, d2);
 					SetDlgItemText(hwndApp, IDC_FILENAME, buf);
 					OutputDebugString(buf);*/
@@ -2366,7 +2403,7 @@ int process_midi_event(track_header_t *th)
 					th->last_note_pitch = d1;
 					th->last_note_velocity = d2;
 					note_on(TRUE, d1, d2, channel);
-					//midiOutShortMsg(hout, MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
+					//kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 					/*sprintf(buf, "Note on, d1 = %d, d2 = %d\n", d1, d2);
 					SetDlgItemText(hwndApp, IDC_FILENAME, buf);
 					OutputDebugString(buf);*/
@@ -2382,7 +2419,7 @@ int process_midi_event(track_header_t *th)
 				d1 = read_byte_mem(th);
 				d2 = read_byte_mem(th);
 				if (!ms.analyzing)
-					midiOutShortMsg(hout, MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
+					kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 				//fprintf(outfile, "Key After-touch, note %d velocity %d\n", d1, d2);
 				break;
 			case 0x0B: // Control Change
@@ -2402,7 +2439,7 @@ int process_midi_event(track_header_t *th)
 					if (!ms.channels[channel].controller_overridden[d1])
 					{
 						ms.channels[channel].controllers[d1] = d2;			// Update controller value
-						midiOutShortMsg(hout, MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
+						kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 					}
 				}
 				//fprintf(outfile, "Control Change, controller %d value %d\n", d1, d2);
@@ -2421,7 +2458,7 @@ int process_midi_event(track_header_t *th)
 			case 0x0D: // Channel after-touch
 				d1 = read_byte_mem(th);
 				if (!ms.analyzing)
-					midiOutShortMsg(hout, MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(0, 0)));
+					kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(0, 0)));
 				//fprintf(outfile, "Channel After-touch, channel %d\n", d1);
 				break;
 			case 0x0E: // Pitch wheel
@@ -2433,7 +2470,7 @@ int process_midi_event(track_header_t *th)
 				pitchbend |= (unsigned short) d1;
 				if (!ms.analyzing)
 				{
-					midiOutShortMsg(hout, MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
+					kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 					ms.channels[channel].last_pitch_bend = th->last_pitch_bend = (signed int) pitchbend - MAX_PITCH_BEND;
 				}
 				else
@@ -2594,7 +2631,7 @@ void set_channel_program(int channel, int program, int bank)
 	assert(program < 128);
 
 	if (hout)
-		midiOutShortMsg(hout, MAKELONG(MAKEWORD(MAKEBYTE(channel, 0x0C), program), MAKEWORD(0, 0)));
+		kShortMsg(MAKELONG(MAKEWORD(MAKEBYTE(channel, 0x0C), program), MAKEWORD(0, 0)));
 
 	if (channel != 9)
 		SetDlgItemText(hwndApp, IDC_T0 + channel, get_program_name(program, bank));
@@ -2645,7 +2682,7 @@ char *get_sysex_manufacturer_name(int id)
 void set_channel_controller(unsigned char channel, unsigned char controller, unsigned char value)
 {
 	if (hout)
-		midiOutShortMsg(hout, MAKELONG(MAKEWORD(MAKEBYTE(channel, 0x0B), controller), MAKEWORD(value, 0)));
+		kShortMsg(MAKELONG(MAKEWORD(MAKEBYTE(channel, 0x0B), controller), MAKEWORD(value, 0)));
 }
 
 // Updates the volume for a given note on a given channel
