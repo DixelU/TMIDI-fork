@@ -2371,11 +2371,12 @@ BeginPlayback:
 				//i = 0;
 				while (curtime < nexttrigger && !(ms.stop_requested))
 				{
+					uint64_t microseconds = (nexttrigger - curtime) * 1000;
 #ifdef _DEBUG
-					sprintf(buf, "Sleeping for %d s\n", (int) (nexttrigger - curtime));
+					sprintf(buf, "Sleeping for %llu ms\n", microseconds);
 					OutputDebugString(buf);
 #endif
-					Sleep((int) (nexttrigger - curtime));
+					std::this_thread::sleep_for(std::chrono::microseconds(microseconds));
 					//Sleep(5);
 					curtime = GetHRTickCount();
 					//i++;
@@ -2461,8 +2462,8 @@ BeginPlayback:
 
 int process_midi_event(track_header_t *th)
 {
-	char *MThd = "MThd";
-	char *MTrk = "MTrk";
+	const char *MThd = "MThd";
+	const char *MTrk = "MTrk";
 	unsigned char *text;
 	unsigned char id[4];
 	char eventname[128];
