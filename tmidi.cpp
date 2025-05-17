@@ -976,7 +976,7 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 		channel = 9;
 
 	dwParam1 = MAKELONG(MAKEWORD(MAKEBYTE(channel, on ? 9 : 8), note), MAKEWORD(velocity, 0));
-	if (hout)
+	if (hout) [[likely]]
 		midiOutShortMsg(hout, dwParam1);
 }
 
@@ -2260,7 +2260,7 @@ BeginPlayback:
 					th[i].trigger = curtime + th[i].dt;
 				}
 
-				//curtime = GetHRTickCount();
+				curtime = GetHRTickCount();
 
 				// Process MIDI events until one is scheduled for a time in the future
 				while (curtime >= th[i].trigger)
