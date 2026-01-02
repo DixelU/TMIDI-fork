@@ -503,42 +503,39 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 				if (!get_scroll_value(wParam, lParam, &i) && i > 0)
 					set_tempo((int)(60000000.0f / i));
 			}
-			else
-				if (((HWND)lParam) == GetDlgItem(hDlg, IDC_PITCH_SLIDER))
+			else if (((HWND)lParam) == GetDlgItem(hDlg, IDC_PITCH_SLIDER))
+			{
+				if (!get_scroll_value(wParam, lParam, &i))
+					set_mod_pitch(i - 24);
+			}
+			else if (((HWND)lParam) == GetDlgItem(hDlg, IDC_VELOCITY_SLIDER))
+			{
+				if (!get_scroll_value(wParam, lParam, &i))
+					set_mod_velocity(i - 64);
+			}
+			else if (((HWND)lParam) == GetDlgItem(hDlg, IDC_SONG_SLIDER))
+			{
+				i = 0;
+				switch (LOWORD(wParam))
 				{
-					if (!get_scroll_value(wParam, lParam, &i))
-						set_mod_pitch(i - 24);
-				}
-				else
-					if (((HWND)lParam) == GetDlgItem(hDlg, IDC_VELOCITY_SLIDER))
-					{
-						if (!get_scroll_value(wParam, lParam, &i))
-							set_mod_velocity(i - 64);
-					}
-					else
-						if (((HWND)lParam) == GetDlgItem(hDlg, IDC_SONG_SLIDER))
+					case TB_ENDTRACK:
+						i = SendMessage((HWND)lParam, TBM_GETPOS, 0, 0);
+						ms.seek_sliding = 0;
+						if (!ms.seeking)
 						{
-							i = 0;
-							switch (LOWORD(wParam))
-							{
-								case TB_ENDTRACK:
-									i = SendMessage((HWND)lParam, TBM_GETPOS, 0, 0);
-									ms.seek_sliding = 0;
-									if (!ms.seeking)
-									{
-										ms.seeking = 1;
-										ms.seek_to = (double)(i * 1000);
-									}
-									break;
-								case TB_THUMBTRACK:
-								case TB_THUMBPOSITION:
-									i = HIWORD(wParam);
-									sprintf(buf, "%d:%02d / %d:%02d", i / 60, i % 60, ms.song_length / 60, ms.song_length % 60);
-									SetDlgItemText(hDlg, IDC_SONG_LENGTH, buf);
-									ms.seek_sliding = 1;
-									break;
-							}
+							ms.seeking = 1;
+							ms.seek_to = (double)(i * 1000);
 						}
+						break;
+					case TB_THUMBTRACK:
+					case TB_THUMBPOSITION:
+						i = HIWORD(wParam);
+						sprintf(buf, "%d:%02d / %d:%02d", i / 60, i % 60, ms.song_length / 60, ms.song_length % 60);
+						SetDlgItemText(hDlg, IDC_SONG_LENGTH, buf);
+						ms.seek_sliding = 1;
+						break;
+				}
+			}
 			break;
 
 		case WM_NOTIFY:
@@ -548,6 +545,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_COMMAND:
+		{
 			// Look for instrument names getting clicked on
 			if (LOWORD(wParam) >= IDC_T0 && LOWORD(wParam) <= IDC_T15)
 			{
@@ -630,197 +628,199 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 					set_program_override(LOWORD(wParam) - IDC_T0, TRUE, i);
 				}
 			}
-			else
-				if (LOWORD(wParam) >= IDC_C0 && LOWORD(wParam) <= IDC_C15)
+			else if (LOWORD(wParam) >= IDC_C0 && LOWORD(wParam) <= IDC_C15)
+			{
+				channel = LOWORD(wParam) - IDC_C0;
+				switch (HIWORD(wParam))
 				{
-					channel = LOWORD(wParam) - IDC_C0;
-					switch (HIWORD(wParam))
-					{
-						case BN_CLICKED:
-							set_channel_mute(channel, !ms.channels[channel].muted);
-							SetFocus(GetDlgItem(hDlg, IDC_STOP));
-							break;
-						case WM_RBUTTONUP:	// WHO'S THE MAN!!!!!!!!!
-							//case BN_DBLCLK:
-							set_channel_solo(channel);
-							SetFocus(GetDlgItem(hDlg, IDC_STOP));
-							break;
-					}
+					case BN_CLICKED:
+						set_channel_mute(channel, !ms.channels[channel].muted);
+						SetFocus(GetDlgItem(hDlg, IDC_STOP));
+						break;
+					case WM_RBUTTONUP:	// WHO'S THE MAN!!!!!!!!!
+						//case BN_DBLCLK:
+						set_channel_solo(channel);
+						SetFocus(GetDlgItem(hDlg, IDC_STOP));
+						break;
 				}
-				else	// Handle regular control events
-					switch (LOWORD(wParam))
-					{
-						case IDC_ALL_INSTR:
-							if (HIWORD(wParam) == BN_CLICKED)
+			}
+			else
+			{
+				// Handle regular control events
+				switch (LOWORD(wParam))
+				{
+					case IDC_ALL_INSTR:
+						if (HIWORD(wParam) == BN_CLICKED)
+						{
+							if (ms.channels[0].program_overridden)
 							{
-								if (ms.channels[0].program_overridden)
-								{
-									for (i = 1; i < 16; i++)
-										if (i != 9)
-											set_program_override(i, TRUE, ms.channels[0].override_program);
-								}
-								else
-								{
-									for (i = 0; i < 16; i++)
-										if (ms.channels[i].program_overridden)
-											break;
-									if (i != 16)
-										for (i = 0; i < 16; i++)
-											set_program_override(i, FALSE, 0);
-									else
-										MessageBox(hwndApp, "To use the All Instr. button, override the instrument of the first channel by clicking on its instrument name and choosing another channel.  Then hit the All Instr. button to override all channels with that instrument.  To turn off the overrides, set the first channel back to its default instrument and hit the All Instr. button again.", "All Instr. Explanation", MB_ICONINFORMATION);
-								}
+								for (i = 1; i < 16; i++)
+									if (i != 9)
+										set_program_override(i, TRUE, ms.channels[0].override_program);
 							}
-							break;
-						case IDC_PITCH:
-							set_mod_pitch(0);
-							break;
-						case IDC_VELOCITY:
-							ms.mod_velocity = 0;
-							SendDlgItemMessage(hDlg, IDC_VELOCITY_SLIDER, TBM_SETPOS, TRUE, 64);
-							SetDlgItemText(hDlg, IDC_VELOCITY, "Velocity: 0");
-							break;
-						case IDC_MIDI_OUT:
-							//if (HIWORD(wParam) == CBN_SELCHANGE)
-							//	init_midi_out((HWND) lParam);
-							break;
-						case IDC_MIDI_IN:
-							if (HIWORD(wParam) == CBN_SELCHANGE)
-								init_midi_in((HWND)lParam);
-							break;
-						case IDC_CONTROLLERS:
-							if (HIWORD(wParam) == CBN_SELCHANGE)
+							else
 							{
-								// Get the selection index
-								hwndcb = (HWND)lParam;
-								i = SendMessage(hwndcb, CB_GETCURSEL, 0, 0);
-								// Get the controller ID
-								j = SendMessage(hwndcb, CB_GETITEMDATA, (WPARAM)i, 0);
-								// Check auto vs. other
-								if (j == -1)
-								{
+								for (i = 0; i < 16; i++)
+									if (ms.channels[i].program_overridden)
+										break;
+								if (i != 16)
 									for (i = 0; i < 16; i++)
-									{
-										ms.channels[i].lock_controller = 0;
-										ms.channels[i].displayed_controller = ms.channels[i].last_controller;
-										ms.channels[i].drawn = 1;
-									}
-									update_display(NULL);
-								}
+										set_program_override(i, FALSE, 0);
 								else
-								{
-									for (i = 0; i < 16; i++)
-									{
-										ms.channels[i].lock_controller = 1;
-										ms.channels[i].displayed_controller = j;
-										ms.channels[i].drawn = 1;
-									}
-									update_display(NULL);
-								}
+									MessageBox(hwndApp, "To use the All Instr. button, override the instrument of the first channel by clicking on its instrument name and choosing another channel.  Then hit the All Instr. button to override all channels with that instrument.  To turn off the overrides, set the first channel back to its default instrument and hit the All Instr. button again.", "All Instr. Explanation", MB_ICONINFORMATION);
 							}
-							break;
-						case IDC_PLAY:
-							if (HIWORD(wParam) == BN_CLICKED)
-								if (!(ms.playing) && ms.filename && ms.filename[0])
-									_beginthread(playback_thread, 0, NULL);
-								else
-									if (ms.paused)
-										ms.paused = 0;
-							break;
-						case IDC_STOP:
-							if (HIWORD(wParam) == BN_CLICKED)
+						}
+						break;
+					case IDC_PITCH:
+						set_mod_pitch(0);
+						break;
+					case IDC_VELOCITY:
+						ms.mod_velocity = 0;
+						SendDlgItemMessage(hDlg, IDC_VELOCITY_SLIDER, TBM_SETPOS, TRUE, 64);
+						SetDlgItemText(hDlg, IDC_VELOCITY, "Velocity: 0");
+						break;
+					case IDC_MIDI_OUT:
+						//if (HIWORD(wParam) == CBN_SELCHANGE)
+						//	init_midi_out((HWND) lParam);
+						break;
+					case IDC_MIDI_IN:
+						if (HIWORD(wParam) == CBN_SELCHANGE)
+							init_midi_in((HWND)lParam);
+						break;
+					case IDC_CONTROLLERS:
+						if (HIWORD(wParam) == CBN_SELCHANGE)
+						{
+							// Get the selection index
+							hwndcb = (HWND)lParam;
+							i = SendMessage(hwndcb, CB_GETCURSEL, 0, 0);
+							// Get the controller ID
+							j = SendMessage(hwndcb, CB_GETITEMDATA, (WPARAM)i, 0);
+							// Check auto vs. other
+							if (j == -1)
+							{
+								for (i = 0; i < 16; i++)
+								{
+									ms.channels[i].lock_controller = 0;
+									ms.channels[i].displayed_controller = ms.channels[i].last_controller;
+									ms.channels[i].drawn = 1;
+								}
+								update_display(NULL);
+							}
+							else
+							{
+								for (i = 0; i < 16; i++)
+								{
+									ms.channels[i].lock_controller = 1;
+									ms.channels[i].displayed_controller = j;
+									ms.channels[i].drawn = 1;
+								}
+								update_display(NULL);
+							}
+						}
+						break;
+					case IDC_PLAY:
+						if (HIWORD(wParam) == BN_CLICKED)
+							if (!(ms.playing) && ms.filename && ms.filename[0])
+								_beginthread(playback_thread, 0, NULL);
+							else if (ms.paused)
+								ms.paused = 0;
+						break;
+					case IDC_STOP:
+						if (HIWORD(wParam) == BN_CLICKED)
+							ms.stop_requested = 1;
+						break;
+					case IDC_PAUSE:
+						if (HIWORD(wParam) == BN_CLICKED)
+							ms.paused = !(ms.paused);
+						break;
+					case IDM_FILE_OPEN:
+					case IDC_OPEN:
+						if (HIWORD(wParam) == BN_CLICKED)
+						{
+							if (ms.playing)
 								ms.stop_requested = 1;
-							break;
-						case IDC_PAUSE:
-							if (HIWORD(wParam) == BN_CLICKED)
-								ms.paused = !(ms.paused);
-							break;
-						case IDM_FILE_OPEN:
-						case IDC_OPEN:
-							if (HIWORD(wParam) == BN_CLICKED)
+							// Get the filename from the user with the common open file dialog
+							ZeroMemory(&ofn, sizeof(OPENFILENAME));
+							ofn.lStructSize = sizeof(OPENFILENAME);
+							ofn.hwndOwner = hDlg;
+							ofn.lpstrFile = filename;
+							ofn.nMaxFile = sizeof(filename);
+							ofn.lpstrFilter = "MIDI Files (*.mid;*.rmi)\0*.mid;*.rmi\0All Files (*.*)\0*.*\0";
+							ofn.nFilterIndex = 0;
+							ofn.lpstrFileTitle = NULL;
+							ofn.nMaxFileTitle = 0;
+							ofn.lpstrInitialDir = NULL;
+							ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+							i = GetOpenFileName(&ofn);
+							if (i)
+								load_midi(filename, hDlg);
+							/*else
 							{
-								if (ms.playing)
-									ms.stop_requested = 1;
-								// Get the filename from the user with the common open file dialog
-								ZeroMemory(&ofn, sizeof(OPENFILENAME));
-								ofn.lStructSize = sizeof(OPENFILENAME);
-								ofn.hwndOwner = hDlg;
-								ofn.lpstrFile = filename;
-								ofn.nMaxFile = sizeof(filename);
-								ofn.lpstrFilter = "MIDI Files (*.mid;*.rmi)\0*.mid;*.rmi\0All Files (*.*)\0*.*\0";
-								ofn.nFilterIndex = 0;
-								ofn.lpstrFileTitle = NULL;
-								ofn.nMaxFileTitle = 0;
-								ofn.lpstrInitialDir = NULL;
-								ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-								i = GetOpenFileName(&ofn);
-								if (i)
-									load_midi(filename, hDlg);
-								/*else
-								{
-									i = CommDlgExtendedError();
-									itoa(i, filename, 10);
-									MessageBox(hwndApp, "argh!", filename, MB_ICONERROR);
-								}*/
-							}
-							break;
-						case IDC_ANALYSIS:
-							if (HIWORD(wParam) == BN_CLICKED)
-							{
-								ShellExecute(hDlg, "open", "notepad", analysis_file, NULL, SW_SHOWNORMAL);
-							}
-							break;
-						case IDC_CURRENT_TEXT:
-						case IDC_DISPLAY_TEXT:
-							if (HIWORD(wParam) == BN_CLICKED || HIWORD(wParam) == STN_CLICKED)
-							{
-								if (hwndText)
-									PostMessage(hwndText, WM_CLOSE, 0, 0);
-								//SetForegroundWindow(hwndText);
-								else
-									hwndText = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TEXT), hwndApp, (DLGPROC)TextDlg);
-							}
-							break;
-						case IDC_DISPLAY_TRACKS:
-							if (HIWORD(wParam) == BN_CLICKED)
-							{
-								if (hwndTracks)
-									PostMessage(hwndTracks, WM_CLOSE, 0, 0);
-								//SetForegroundWindow(hwndText);
-								else
-									hwndTracks = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TRACKS), hwndApp, (DLGPROC)TracksDlg);
-							}
-							break;
-						case IDC_DISPLAY_CHANNELS:
-							if (HIWORD(wParam) == BN_CLICKED)
-							{
-								if (hwndChannels)
-									PostMessage(hwndChannels, WM_CLOSE, 0, 0);
-								//SetForegroundWindow(hwndText);
-								else
-									hwndChannels = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_CHANNELS), hwndApp, (DLGPROC)ChannelsDlg);
-							}
-							break;
-						case IDC_DISPLAY_SYSEX:
-							if (HIWORD(wParam) == BN_CLICKED)
-							{
-								if (hwndSysex)
-									PostMessage(hwndSysex, WM_CLOSE, 0, 0);
-								//SetForegroundWindow(hwndText);
-								else
-									hwndSysex = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_SYSEX), hwndApp, (DLGPROC)SysexDlg);
-							}
-							break;
-						case IDM_OUTCONFIG:
-							DialogBox(ghInstance, MAKEINTRESOURCE(IDD_OUTCONFIG), hDlg, (DLGPROC)OutConfigDlg);
-							break;
-						case IDOK:
-							return TRUE;
-						case IDM_FILE_EXIT:
-						case IDCANCEL:
-							EndDialog(hDlg, 0);
-							return TRUE;
-					}
+								i = CommDlgExtendedError();
+								itoa(i, filename, 10);
+								MessageBox(hwndApp, "argh!", filename, MB_ICONERROR);
+							}*/
+						}
+						break;
+					case IDC_ANALYSIS:
+						if (HIWORD(wParam) == BN_CLICKED)
+						{
+							ShellExecute(hDlg, "open", "notepad", analysis_file, NULL, SW_SHOWNORMAL);
+						}
+						break;
+					case IDC_CURRENT_TEXT:
+					case IDC_DISPLAY_TEXT:
+						if (HIWORD(wParam) == BN_CLICKED || HIWORD(wParam) == STN_CLICKED)
+						{
+							if (hwndText)
+								PostMessage(hwndText, WM_CLOSE, 0, 0);
+							//SetForegroundWindow(hwndText);
+							else
+								hwndText = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TEXT), hwndApp, (DLGPROC)TextDlg);
+						}
+						break;
+					case IDC_DISPLAY_TRACKS:
+						if (HIWORD(wParam) == BN_CLICKED)
+						{
+							if (hwndTracks)
+								PostMessage(hwndTracks, WM_CLOSE, 0, 0);
+							//SetForegroundWindow(hwndText);
+							else
+								hwndTracks = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TRACKS), hwndApp, (DLGPROC)TracksDlg);
+						}
+						break;
+					case IDC_DISPLAY_CHANNELS:
+						if (HIWORD(wParam) == BN_CLICKED)
+						{
+							if (hwndChannels)
+								PostMessage(hwndChannels, WM_CLOSE, 0, 0);
+							//SetForegroundWindow(hwndText);
+							else
+								hwndChannels = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_CHANNELS), hwndApp, (DLGPROC)ChannelsDlg);
+						}
+						break;
+					case IDC_DISPLAY_SYSEX:
+						if (HIWORD(wParam) == BN_CLICKED)
+						{
+							if (hwndSysex)
+								PostMessage(hwndSysex, WM_CLOSE, 0, 0);
+							//SetForegroundWindow(hwndText);
+							else
+								hwndSysex = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_SYSEX), hwndApp, (DLGPROC)SysexDlg);
+						}
+						break;
+					case IDM_OUTCONFIG:
+						DialogBox(ghInstance, MAKEINTRESOURCE(IDD_OUTCONFIG), hDlg, (DLGPROC)OutConfigDlg);
+						break;
+					case IDOK:
+						return TRUE;
+					case IDM_FILE_EXIT:
+					case IDCANCEL:
+						EndDialog(hDlg, 0);
+						return TRUE;
+				}
+			}
+		}
 	}
 
 	return FALSE;
@@ -1447,19 +1447,59 @@ inline unsigned int read_vlq_mem(track_header_t* th)
 	return value;
 }
 
+namespace MSVC_STL_2085
+{
+
+// wraps QueryPerformanceCounter
+struct steady_clock_fast
+{
+	using rep = long long;
+	using period = std::nano;
+	using duration = std::chrono::nanoseconds;
+	using time_point = _CHRONO time_point<steady_clock_fast>;
+	static constexpr bool is_steady = true;
+
+	// get current time
+	_NODISCARD static time_point now() noexcept
+	{
+		static const long long _Freq = _Query_perf_frequency(); // doesn't change after system boot
+		const long long _Ctr = _Query_perf_counter();
+		static_assert(period::num == 1, "This assumes period::num == 1.");
+		// Instead of just having "(_Ctr * period::den) / _Freq",
+		// the algorithm below prevents overflow when _Ctr is sufficiently large.
+		// It assumes that _Freq * period::den does not overflow, which is currently true for nano period.
+		// It is not realistic for _Ctr to accumulate to large values from zero with this assumption,
+		// but the initial value of _Ctr could be large.
+		// 10 MHz is a very common QPC frequency on modern PCs. Optimizing for
+		// this specific frequency can double the performance of this function by
+		// avoiding the expensive frequency conversion path.
+		if (_Freq == 10000000)
+		{
+			return time_point(duration(_Ctr * 100));
+		}
+		else 
+		{
+			const long long _Whole = (_Ctr / _Freq) * period::den;
+			const long long _Part = (_Ctr % _Freq) * period::den / _Freq;
+			return time_point(duration(_Whole + _Part));
+		}
+	}
+};
+
+}
+
+// returns MILLISECONDS 
 inline double GetHRTickCount(void)
 {
 	constexpr bool use_winapi = false;
 
 	if (use_winapi)
 	{
-		double d;
+		static const auto begining = MSVC_STL_2085::steady_clock_fast::now();
 
-		timeBeginPeriod(1);
-		d = (double)timeGetTime();
-		timeEndPeriod(1);
+		auto now = MSVC_STL_2085::steady_clock_fast::now();
 
-		return d;
+		return std::chrono::duration_cast<std::chrono::microseconds>(now - begining).count() * 0.001;
 	}
 	else
 	{
@@ -3173,7 +3213,7 @@ void set_tempo(int new_tempo)
 
 	// Calculate new tick length
 	old_tick_length = ms.tick_length;
-	ms.tick_length = ((double)(new_tempo) / (double)(int(mh.num_ticks) * 1000));
+	ms.tick_length = ((double)(new_tempo) / (double)(unsigned(mh.num_ticks) * 1000));
 
 	if (new_tempo == last_tempo)
 		return;
