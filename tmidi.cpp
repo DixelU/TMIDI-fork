@@ -1750,7 +1750,7 @@ void deferred_gui_update_call()
 	SetDlgItemText(hwndApp, IDC_EVENTS, buf);
 	// Set MIDI events position slider
 	SendDlgItemMessage(hwndApp, IDC_EVENT_SLIDER, TBM_SETPOS, TRUE, num_events / 10);
-	// Set song current time / total time text
+	// Set song current time / total time text / current tempo
 	global_state.elapsed = (int)((global_state.current - global_state.starttime) / 1000.0f);
 	if (!ms.seek_sliding)
 	{
@@ -1758,6 +1758,10 @@ void deferred_gui_update_call()
 		SetDlgItemText(hwndApp, IDC_SONG_LENGTH, buf);
 		// Set song position slider
 		SendDlgItemMessage(hwndApp, IDC_SONG_SLIDER, TBM_SETPOS, TRUE, global_state.elapsed);
+
+		sprintf(buf, "%.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / ms.tempo);
+		SetDlgItemText(hwndApp, IDC_TEMPO, buf);
+		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, TRUE, (int)(60000000.0f / ms.tempo));
 	}
 	// Calculate and display polyphony
 	uint64_t polyphony, i;
@@ -1877,10 +1881,6 @@ void __cdecl playback_thread(void* spointer)
 	BeginPlayback:
 		// Initialize tempo
 		set_tempo((int)(60000000.0f / ms.tempo));
-		/*sprintf(buf, "Tempo: %.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / ms.tempo);
-		SetDlgItemText(hwndApp, IDC_TICK, buf);
-		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, FALSE, (int) (60000000.0f / ms.tempo));
-		*/
 
 		// Initialize playback parameters
 		num_events = 0;
@@ -2313,8 +2313,8 @@ int process_midi_event(track_header_t* th)
 				break;
 			case 0x2F:		// End of track
 				//				//fprintf(outfile, "End of track\n");
-				sprintf(buf, "End of track %d\n", th->tracknum);
-				OutputDebugString(buf);
+				//sprintf(buf, "End of track %d\n", th->tracknum);
+				//OutputDebugString(buf);
 				th->enabled = 0;
 				endtrack = 1;
 				break;
@@ -3173,20 +3173,12 @@ void set_tempo(int new_tempo)
 
 	// Calculate new tick length
 	old_tick_length = ms.tick_length;
-	ms.tick_length = ((double)(new_tempo / 1000) / (double)mh.num_ticks);
+	ms.tick_length = ((double)(new_tempo) / (double)(int(mh.num_ticks) * 1000));
 
 	if (new_tempo == last_tempo)
 		return;
 
-	last_tempo = new_tempo;
-
-	if (!ms.analyzing || ms.seeking)
-	{
-		// Update tick length display on the main dialog
-		sprintf(buf, "%.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / new_tempo);
-		SetDlgItemText(hwndApp, IDC_TEMPO, buf);
-		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, TRUE, (int)(60000000.0f / new_tempo));
-	}
+	ms.tempo = last_tempo = new_tempo;
 
 	// Output some debug info summarizing this tempo change
 	//sprintf(buf, "(%d / 1000) / %d = %.2f", intd, mh.num_ticks, ms.tick_length);
