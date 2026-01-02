@@ -1987,7 +1987,7 @@ void __cdecl playback_thread(void* spointer)
 					th[i].trigger = curtime + th[i].dt;
 				}
 
-				//curtime = GetHRTickCount();
+				curtime = GetHRTickCount();
 
 				// Process MIDI events until one is scheduled for a time in the future
 				while (curtime >= th[i].trigger)
