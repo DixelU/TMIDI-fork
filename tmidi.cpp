@@ -14,7 +14,7 @@
 
  */
 
-//#define _WIN32_IE 0x0300	// Required for backwards compatibility with comctl32.dll in all Win32 apps!
+ //#define _WIN32_IE 0x0300	// Required for backwards compatibility with comctl32.dll in all Win32 apps!
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -45,30 +45,30 @@ void write_registry_settings(void);
 void check_associations(void);
 void set_associations(void);
 // File functions
-int read_bytes(FILE *fp, unsigned char *buf, int num);
-unsigned int read_int(FILE *fp);
-unsigned short int read_short(FILE *fp);
-unsigned int read_vlq(FILE *fp, unsigned int *offset);
+int read_bytes(FILE* fp, unsigned char* buf, int num);
+unsigned int read_int(FILE* fp);
+unsigned short int read_short(FILE* fp);
+unsigned int read_vlq(FILE* fp, unsigned int* offset);
 // Memory functions
-unsigned char read_byte_mem(track_header_t *th);
-unsigned int read_int_mem(track_header_t *th);
-int read_bytes_mem(track_header_t *th, unsigned char *buf, int num);
-unsigned short int read_short_mem(track_header_t *th);
-unsigned int read_vlq_mem(track_header_t *th);
+unsigned char read_byte_mem(track_header_t* th);
+unsigned int read_int_mem(track_header_t* th);
+int read_bytes_mem(track_header_t* th, unsigned char* buf, int num);
+unsigned short int read_short_mem(track_header_t* th);
+unsigned int read_vlq_mem(track_header_t* th);
 // MIDI functions
-void __cdecl playback_thread(void *spointer);
-int load_midi(char *filename, HWND hDlg);
+void __cdecl playback_thread(void* spointer);
+int load_midi(char* filename, HWND hDlg);
 int analyze_midi(void);
-int process_midi_event(track_header_t *th);
-void reverse_endian_word(unsigned short int *word);
+int process_midi_event(track_header_t* th);
+void reverse_endian_word(unsigned short int* word);
 void enum_devices(HWND hwnd);
 void init_midi_in(HWND hwndcb);
 void init_midi_out(HWND hwndcb);
 void close_midi_in(void);
 void close_midi_out(void);
 void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
-void output_sysex_data(unsigned char channel, unsigned char *data, int length);
-int handle_sysex_dump(FILE *fp);
+void output_sysex_data(unsigned char channel, unsigned char* data, int length);
+int handle_sysex_dump(FILE* fp);
 void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsigned char channel);
 void all_notes_off_channel(int channel);
 void all_notes_off(void);
@@ -84,26 +84,26 @@ void set_channel_mute(int channel, int mute);
 void set_channel_solo(int channel);
 void init_mt32_state(void);
 // Name resolution / sysex interpretation functions
-char *get_drum_kit_name(int program);
-char *get_sysex_manufacturer_name(int id);
-char *interpret_sysex(unsigned char *s, int len);
-char *interpret_model(unsigned char *s);
-char *interpret_command(unsigned char *s);
+char* get_drum_kit_name(int program);
+char* get_sysex_manufacturer_name(int id);
+char* interpret_sysex(unsigned char* s, int len);
+char* interpret_model(unsigned char* s);
+char* interpret_command(unsigned char* s);
 char interpret_sysex_part(unsigned char c);
-void interpret_mt32_patch_memory(unsigned char *s, int len);
-void interpret_mt32_timbre_memory(unsigned char *s, int len);
-char *get_yamaha_effect_name(unsigned char effect);
-void check_midi_standard(unsigned char *data);
-char *get_program_name(unsigned char program, unsigned char bank);
+void interpret_mt32_patch_memory(unsigned char* s, int len);
+void interpret_mt32_timbre_memory(unsigned char* s, int len);
+char* get_yamaha_effect_name(unsigned char effect);
+void check_midi_standard(unsigned char* data);
+char* get_program_name(unsigned char program, unsigned char bank);
 // Linked list functions
-midi_text_t *new_midi_text(char *midi_text, int text_type, double midi_time, int track, int track_offset);
+midi_text_t* new_midi_text(char* midi_text, int text_type, double midi_time, int track, int track_offset);
 void kill_all_midi_text(void);
-midi_sysex_t *new_midi_sysex(unsigned char *data, int length, double midi_time, int track, int track_offset, int channel);
+midi_sysex_t* new_midi_sysex(unsigned char* data, int length, double midi_time, int track, int track_offset, int channel);
 void kill_all_midi_sysex(void);
 // Playlist functions
-playlist_t *playlist_add(char *filename);
+playlist_t* playlist_add(char* filename);
 void playlist_clear(void);
-playlist_t *playlist_remove(playlist_t *target);
+playlist_t* playlist_remove(playlist_t* target);
 // Tracks list view functions
 void InitTracksListView(HWND hwndLV);
 void FillTracksListView(HWND hwndLV);
@@ -113,18 +113,18 @@ void InitChannelsListView(HWND hwndLV);
 void FillChannelsListView(HWND hwndLV);
 void SetupItemsChannelsListView(HWND hwndLV);
 // Generic list view functions
-void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int &lastval, int val);
-void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int &lastval, char *str);
+void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int& lastval, int val);
+void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int& lastval, char* str);
 // Sysex list view functions
 void InitSysexListView(HWND hwndLV);
 void SetupItemsSysexListView(HWND hwndLV);
 // Misc junk
-void hsv_to_rgb_int(int h, int s, int v, int &r, int &g, int &b);
-void hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b);
-int get_scroll_value(WPARAM wParam, LPARAM lParam, int *i);
-char *stristr(char *src, char *target);
-char *extract_filename(char *filename);
-void copy_to_clipboard(char *str);
+void hsv_to_rgb_int(int h, int s, int v, int& r, int& g, int& b);
+void hsv_to_rgb(float h, float s, float v, int* r, int* g, int* b);
+int get_scroll_value(WPARAM wParam, LPARAM lParam, int* i);
+char* stristr(char* src, char* target);
+char* extract_filename(char* filename);
+void copy_to_clipboard(char* str);
 // Tooltip functions
 LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam);
 VOID OnWMNotify(LPARAM lParam);
@@ -185,14 +185,14 @@ int InitKDMAPI()
 	return 0;
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
-				   PSTR szCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR szCmdLine, int iCmdShow)
 {
 	DWORD disposition;
 	HWND hwnd;
 	COPYDATASTRUCT cds;
 	char fn[MAX_PATH];
-	char *fnptr;
+	char* fnptr;
 
 	ghInstance = hInstance;
 
@@ -214,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		if (hwnd)
 		{
 			// If so, tell that instance to play the specified file
-			SendMessage(hwnd, WM_COPYDATA, (WPARAM) hwnd, (LPARAM) &cds);
+			SendMessage(hwnd, WM_COPYDATA, (WPARAM)hwnd, (LPARAM)&cds);
 			return 0;
 		}
 		else
@@ -222,12 +222,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 
 	// Initialize our connection to the registry
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Tom Grandgent", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Tom Grandgent", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
 	RegCloseKey(key);
-	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Tom Grandgent\\TMIDI", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
-	
+	RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Tom Grandgent\\TMIDI", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
+
 	// Read settings from the registry
 	read_registry_settings();
 
@@ -254,7 +254,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 	// Show the main program dialog
-	DialogBox(ghInstance, MAKEINTRESOURCE(IDD_MAIN), NULL, (DLGPROC) MainDlg);
+	DialogBox(ghInstance, MAKEINTRESOURCE(IDD_MAIN), NULL, (DLGPROC)MainDlg);
 
 	// If the MIDI-in interface is still open, close it
 	if (hin)
@@ -279,7 +279,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	static char buf[MAX_PATH + 64];
-	char *ch;
+	char* ch;
 	char filename[256] = "";
 	OPENFILENAME ofn;
 	int i, j, channel, category, instrument, ret;
@@ -288,7 +288,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	HMENU hmenu, cmenu[16];
 	MENUITEMINFO mii;
 	HANDLE hDrop = NULL;
-	static HBRUSH hGrayBrush = (HBRUSH) GetStockObject(LTGRAY_BRUSH);
+	static HBRUSH hGrayBrush = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
 	static int width, height;
 	int numFiles = 0;
 	HDC hdc;
@@ -296,7 +296,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	RECT tmpRect;
 	PCOPYDATASTRUCT pcds;
 	LPNMHDR nmhdr;
-//	HBRUSH brush;
+	//	HBRUSH brush;
 
 	if (!hwndApp)
 		hwndApp = hDlg;
@@ -306,23 +306,23 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		case WM_INITDIALOG:
 			// Set the main dialog's icon
 			SetClassLongPtr(hDlg, GCLP_HICON,
-				(LONG_PTR) LoadImage(ghInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON,
-						 GetSystemMetrics(SM_CXSMICON),
-						 GetSystemMetrics(SM_CYSMICON), 0));
+				(LONG_PTR)LoadImage(ghInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON,
+					GetSystemMetrics(SM_CXSMICON),
+					GetSystemMetrics(SM_CYSMICON), 0));
 
 			// Create the status bar
 			hwndStatusBar = CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", hDlg, NULL);
 
 			// Set up button icons
-			SendMessage(GetDlgItem(hDlg, IDC_PLAY), BM_SETIMAGE, IMAGE_ICON, 
-						(LPARAM) LoadImage(ghInstance, MAKEINTRESOURCE(IDI_PLAY), IMAGE_ICON, 
-						GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
-			SendMessage(GetDlgItem(hDlg, IDC_PAUSE), BM_SETIMAGE, IMAGE_ICON, 
-						(LPARAM) LoadImage(ghInstance, MAKEINTRESOURCE(IDI_PAUSE), IMAGE_ICON, 
-						GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
-			SendMessage(GetDlgItem(hDlg, IDC_STOP), BM_SETIMAGE, IMAGE_ICON, 
-						(LPARAM) LoadImage(ghInstance, MAKEINTRESOURCE(IDI_STOP), IMAGE_ICON, 
-						GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
+			SendMessage(GetDlgItem(hDlg, IDC_PLAY), BM_SETIMAGE, IMAGE_ICON,
+				(LPARAM)LoadImage(ghInstance, MAKEINTRESOURCE(IDI_PLAY), IMAGE_ICON,
+					GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
+			SendMessage(GetDlgItem(hDlg, IDC_PAUSE), BM_SETIMAGE, IMAGE_ICON,
+				(LPARAM)LoadImage(ghInstance, MAKEINTRESOURCE(IDI_PAUSE), IMAGE_ICON,
+					GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
+			SendMessage(GetDlgItem(hDlg, IDC_STOP), BM_SETIMAGE, IMAGE_ICON,
+				(LPARAM)LoadImage(ghInstance, MAKEINTRESOURCE(IDI_STOP), IMAGE_ICON,
+					GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
 			enum_devices(hDlg);
 			//init_midi_out(GetDlgItem(hDlg, IDC_MIDI_OUT)); // moved to the playback thread
 			init_midi_in(GetDlgItem(hDlg, IDC_MIDI_IN));
@@ -357,8 +357,8 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			// Subclass the channel number button windows
 			for (i = 0; i < 16; i++)
 			{
-				OldButtonProc = (WNDPROC) SetWindowLongPtr(GetDlgItem(hDlg, IDC_C0 + i), 
-					GWLP_WNDPROC, (LONG_PTR) NewButtonProc);
+				OldButtonProc = (WNDPROC)SetWindowLongPtr(GetDlgItem(hDlg, IDC_C0 + i),
+					GWLP_WNDPROC, (LONG_PTR)NewButtonProc);
 				/*if (!OldButtonProc)
 				{
 					i = GetLastError();
@@ -371,14 +371,14 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			// Fill the controller combo box
 			hwndcb = GetDlgItem(hDlg, IDC_CONTROLLERS);
 			SendMessage(hwndcb, CB_RESETCONTENT, 0, 0);
-			SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM) "[Auto]");
+			SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM)"[Auto]");
 			SendMessage(hwndcb, CB_SETITEMDATA, 0, -1);
 			j = 1;
-			for (i = 0; i < sizeof(controller_names) / sizeof(char *); i++)
+			for (i = 0; i < sizeof(controller_names) / sizeof(char*); i++)
 			{
 				if (strcmp(controller_names[i], "Unknown controller"))
 				{
-					SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM) controller_names[i]);
+					SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM)controller_names[i]);
 					SendMessage(hwndcb, CB_SETITEMDATA, j, i);		// Store the index of the controller
 					j++;
 				}
@@ -395,7 +395,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			return TRUE;
 
 		case WM_COPYDATA:
-			pcds = (PCOPYDATASTRUCT) lParam;
+			pcds = (PCOPYDATASTRUCT)lParam;
 			if (pcds->dwData == IPC_PLAY)
 			{
 				// We're being told by another instance that the user has executed 
@@ -403,7 +403,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 				// Clear the playlist, add this file, make it the current file, and load it up
 				playlist_clear();
-				playlist_add((char *) pcds->lpData);
+				playlist_add((char*)pcds->lpData);
 				playback_head = playlist;
 				//SetForegroundWindow(hDlg);
 				PostMessage(hDlg, WMAPP_LOADFILE, 0, 0);
@@ -428,8 +428,8 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			// Remove subclasses for the channel number button windows
 			for (i = 0; i < 16; i++)
-				SetWindowLongPtr(GetDlgItem(hDlg, IDC_C0 + i), 
-					GWLP_WNDPROC, (LONG_PTR) OldButtonProc);
+				SetWindowLongPtr(GetDlgItem(hDlg, IDC_C0 + i),
+					GWLP_WNDPROC, (LONG_PTR)OldButtonProc);
 			// Remove the tooltip hook
 			CleanupTooltip();
 			break;
@@ -474,7 +474,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			if (playback_head)
 			{
 				if (!load_midi(playback_head->filename, hDlg))
-					PostMessage(hDlg, WM_COMMAND, MAKEWPARAM(IDC_PLAY, BN_CLICKED), (LPARAM) GetDlgItem(hDlg, IDC_PLAY));
+					PostMessage(hDlg, WM_COMMAND, MAKEWPARAM(IDC_PLAY, BN_CLICKED), (LPARAM)GetDlgItem(hDlg, IDC_PLAY));
 				else
 				{
 					playback_head = playback_head->next;
@@ -484,12 +484,12 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_DROPFILES:
-			hDrop = (HANDLE) wParam;
-			numFiles = DragQueryFile((HDROP) hDrop, 0xFFFFFFFF, NULL, 0);
+			hDrop = (HANDLE)wParam;
+			numFiles = DragQueryFile((HDROP)hDrop, 0xFFFFFFFF, NULL, 0);
 			playlist_clear();
 			for (i = 0; i < numFiles; i++)
 			{
-				DragQueryFile((HDROP) hDrop, i, filename, sizeof(filename));
+				DragQueryFile((HDROP)hDrop, i, filename, sizeof(filename));
 				playlist_add(filename);
 			}
 			playback_head = playlist;
@@ -498,51 +498,51 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_HSCROLL:
-			if (((HWND) lParam) == GetDlgItem(hDlg, IDC_TEMPO_SLIDER))
+			if (((HWND)lParam) == GetDlgItem(hDlg, IDC_TEMPO_SLIDER))
 			{
 				if (!get_scroll_value(wParam, lParam, &i) && i > 0)
-					set_tempo((int) (60000000.0f / i));
+					set_tempo((int)(60000000.0f / i));
 			}
 			else
-			if (((HWND) lParam) == GetDlgItem(hDlg, IDC_PITCH_SLIDER))
-			{
-				if (!get_scroll_value(wParam, lParam, &i))
-					set_mod_pitch(i - 24);
-			}
-			else
-			if (((HWND) lParam) == GetDlgItem(hDlg, IDC_VELOCITY_SLIDER))
-			{
-				if (!get_scroll_value(wParam, lParam, &i))
-					set_mod_velocity(i - 64);
-			}
-			else
-			if (((HWND) lParam) == GetDlgItem(hDlg, IDC_SONG_SLIDER))
-			{
-				i = 0;
-				switch (LOWORD(wParam))
+				if (((HWND)lParam) == GetDlgItem(hDlg, IDC_PITCH_SLIDER))
 				{
-					case TB_ENDTRACK:
-						i = SendMessage((HWND) lParam, TBM_GETPOS, 0, 0);
-						ms.seek_sliding = 0;
-						if (!ms.seeking)
-						{
-							ms.seeking = 1;
-							ms.seek_to = (double) (i * 1000);
-						}
-						break;
-					case TB_THUMBTRACK:
-					case TB_THUMBPOSITION:
-						i = HIWORD(wParam);
-						sprintf(buf, "%d:%02d / %d:%02d", i / 60, i % 60, ms.song_length / 60, ms.song_length % 60);
-						SetDlgItemText(hDlg, IDC_SONG_LENGTH, buf);
-						ms.seek_sliding = 1;
-						break;
+					if (!get_scroll_value(wParam, lParam, &i))
+						set_mod_pitch(i - 24);
 				}
-			}
+				else
+					if (((HWND)lParam) == GetDlgItem(hDlg, IDC_VELOCITY_SLIDER))
+					{
+						if (!get_scroll_value(wParam, lParam, &i))
+							set_mod_velocity(i - 64);
+					}
+					else
+						if (((HWND)lParam) == GetDlgItem(hDlg, IDC_SONG_SLIDER))
+						{
+							i = 0;
+							switch (LOWORD(wParam))
+							{
+								case TB_ENDTRACK:
+									i = SendMessage((HWND)lParam, TBM_GETPOS, 0, 0);
+									ms.seek_sliding = 0;
+									if (!ms.seeking)
+									{
+										ms.seeking = 1;
+										ms.seek_to = (double)(i * 1000);
+									}
+									break;
+								case TB_THUMBTRACK:
+								case TB_THUMBPOSITION:
+									i = HIWORD(wParam);
+									sprintf(buf, "%d:%02d / %d:%02d", i / 60, i % 60, ms.song_length / 60, ms.song_length % 60);
+									SetDlgItemText(hDlg, IDC_SONG_LENGTH, buf);
+									ms.seek_sliding = 1;
+									break;
+							}
+						}
 			break;
 
 		case WM_NOTIFY:
-			nmhdr = (LPNMHDR) lParam;
+			nmhdr = (LPNMHDR)lParam;
 			if (nmhdr->hwndFrom == g_hwndTT && nmhdr->code == TTN_NEEDTEXT)
 				OnWMNotify(lParam);
 			break;
@@ -579,7 +579,7 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 					if (HIWORD(wParam) == STN_CLICKED)
 					{
 						// Insert drum kit names
-						for (i = 0; i < sizeof(drum_kit_names) / sizeof(char *); i++)
+						for (i = 0; i < sizeof(drum_kit_names) / sizeof(char*); i++)
 						{
 							ch = strchr(drum_kit_names[i], '-');
 							mii.dwTypeData = ch + 2;
@@ -631,196 +631,196 @@ INT_PTR CALLBACK MainDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 			else
-			if (LOWORD(wParam) >= IDC_C0 && LOWORD(wParam) <= IDC_C15)
-			{
-				channel = LOWORD(wParam) - IDC_C0;
-				switch (HIWORD(wParam))
+				if (LOWORD(wParam) >= IDC_C0 && LOWORD(wParam) <= IDC_C15)
 				{
-					case BN_CLICKED:
-						set_channel_mute(channel, !ms.channels[channel].muted);
-						SetFocus(GetDlgItem(hDlg, IDC_STOP));
-						break;
-					case WM_RBUTTONUP:	// WHO'S THE MAN!!!!!!!!!
-					//case BN_DBLCLK:
-						set_channel_solo(channel);
-						SetFocus(GetDlgItem(hDlg, IDC_STOP));
-						break;
+					channel = LOWORD(wParam) - IDC_C0;
+					switch (HIWORD(wParam))
+					{
+						case BN_CLICKED:
+							set_channel_mute(channel, !ms.channels[channel].muted);
+							SetFocus(GetDlgItem(hDlg, IDC_STOP));
+							break;
+						case WM_RBUTTONUP:	// WHO'S THE MAN!!!!!!!!!
+							//case BN_DBLCLK:
+							set_channel_solo(channel);
+							SetFocus(GetDlgItem(hDlg, IDC_STOP));
+							break;
+					}
 				}
-			}
-			else	// Handle regular control events
-			switch (LOWORD(wParam))
-			{
-				case IDC_ALL_INSTR:
-					if (HIWORD(wParam) == BN_CLICKED)
+				else	// Handle regular control events
+					switch (LOWORD(wParam))
 					{
-						if (ms.channels[0].program_overridden)
-						{
-							for (i = 1; i < 16; i++)
-								if (i != 9)
-									set_program_override(i, TRUE, ms.channels[0].override_program);
-						}
-						else
-						{
-							for (i = 0; i < 16; i++)
-								if (ms.channels[i].program_overridden)
-									break;
-							if (i != 16)
-								for (i = 0; i < 16; i++)
-									set_program_override(i, FALSE, 0);
-							else
-								MessageBox(hwndApp, "To use the All Instr. button, override the instrument of the first channel by clicking on its instrument name and choosing another channel.  Then hit the All Instr. button to override all channels with that instrument.  To turn off the overrides, set the first channel back to its default instrument and hit the All Instr. button again.", "All Instr. Explanation", MB_ICONINFORMATION);
-						}
-					}
-					break;
-				case IDC_PITCH:
-					set_mod_pitch(0);
-					break;
-				case IDC_VELOCITY:
-					ms.mod_velocity = 0;
-					SendDlgItemMessage(hDlg, IDC_VELOCITY_SLIDER, TBM_SETPOS, TRUE, 64);
-					SetDlgItemText(hDlg, IDC_VELOCITY, "Velocity: 0");
-					break;
-				case IDC_MIDI_OUT:
-					//if (HIWORD(wParam) == CBN_SELCHANGE)
-					//	init_midi_out((HWND) lParam);
-					break;
-				case IDC_MIDI_IN:
-					if (HIWORD(wParam) == CBN_SELCHANGE)
-						init_midi_in((HWND) lParam);
-					break;
-				case IDC_CONTROLLERS:
-					if (HIWORD(wParam) == CBN_SELCHANGE)
-					{
-						// Get the selection index
-						hwndcb = (HWND) lParam;
-						i = SendMessage(hwndcb, CB_GETCURSEL, 0, 0);
-						// Get the controller ID
-						j = SendMessage(hwndcb, CB_GETITEMDATA, (WPARAM) i, 0);
-						// Check auto vs. other
-						if (j == -1)
-						{
-							for (i = 0; i < 16; i++)
+						case IDC_ALL_INSTR:
+							if (HIWORD(wParam) == BN_CLICKED)
 							{
-								ms.channels[i].lock_controller = 0;
-								ms.channels[i].displayed_controller = ms.channels[i].last_controller;
-								ms.channels[i].drawn = 1;
+								if (ms.channels[0].program_overridden)
+								{
+									for (i = 1; i < 16; i++)
+										if (i != 9)
+											set_program_override(i, TRUE, ms.channels[0].override_program);
+								}
+								else
+								{
+									for (i = 0; i < 16; i++)
+										if (ms.channels[i].program_overridden)
+											break;
+									if (i != 16)
+										for (i = 0; i < 16; i++)
+											set_program_override(i, FALSE, 0);
+									else
+										MessageBox(hwndApp, "To use the All Instr. button, override the instrument of the first channel by clicking on its instrument name and choosing another channel.  Then hit the All Instr. button to override all channels with that instrument.  To turn off the overrides, set the first channel back to its default instrument and hit the All Instr. button again.", "All Instr. Explanation", MB_ICONINFORMATION);
+								}
 							}
-							update_display(NULL);
-						}
-						else
-						{
-							for (i = 0; i < 16; i++)
+							break;
+						case IDC_PITCH:
+							set_mod_pitch(0);
+							break;
+						case IDC_VELOCITY:
+							ms.mod_velocity = 0;
+							SendDlgItemMessage(hDlg, IDC_VELOCITY_SLIDER, TBM_SETPOS, TRUE, 64);
+							SetDlgItemText(hDlg, IDC_VELOCITY, "Velocity: 0");
+							break;
+						case IDC_MIDI_OUT:
+							//if (HIWORD(wParam) == CBN_SELCHANGE)
+							//	init_midi_out((HWND) lParam);
+							break;
+						case IDC_MIDI_IN:
+							if (HIWORD(wParam) == CBN_SELCHANGE)
+								init_midi_in((HWND)lParam);
+							break;
+						case IDC_CONTROLLERS:
+							if (HIWORD(wParam) == CBN_SELCHANGE)
 							{
-								ms.channels[i].lock_controller = 1;
-								ms.channels[i].displayed_controller = j;
-								ms.channels[i].drawn = 1;
+								// Get the selection index
+								hwndcb = (HWND)lParam;
+								i = SendMessage(hwndcb, CB_GETCURSEL, 0, 0);
+								// Get the controller ID
+								j = SendMessage(hwndcb, CB_GETITEMDATA, (WPARAM)i, 0);
+								// Check auto vs. other
+								if (j == -1)
+								{
+									for (i = 0; i < 16; i++)
+									{
+										ms.channels[i].lock_controller = 0;
+										ms.channels[i].displayed_controller = ms.channels[i].last_controller;
+										ms.channels[i].drawn = 1;
+									}
+									update_display(NULL);
+								}
+								else
+								{
+									for (i = 0; i < 16; i++)
+									{
+										ms.channels[i].lock_controller = 1;
+										ms.channels[i].displayed_controller = j;
+										ms.channels[i].drawn = 1;
+									}
+									update_display(NULL);
+								}
 							}
-							update_display(NULL);
-						}
+							break;
+						case IDC_PLAY:
+							if (HIWORD(wParam) == BN_CLICKED)
+								if (!(ms.playing) && ms.filename && ms.filename[0])
+									_beginthread(playback_thread, 0, NULL);
+								else
+									if (ms.paused)
+										ms.paused = 0;
+							break;
+						case IDC_STOP:
+							if (HIWORD(wParam) == BN_CLICKED)
+								ms.stop_requested = 1;
+							break;
+						case IDC_PAUSE:
+							if (HIWORD(wParam) == BN_CLICKED)
+								ms.paused = !(ms.paused);
+							break;
+						case IDM_FILE_OPEN:
+						case IDC_OPEN:
+							if (HIWORD(wParam) == BN_CLICKED)
+							{
+								if (ms.playing)
+									ms.stop_requested = 1;
+								// Get the filename from the user with the common open file dialog
+								ZeroMemory(&ofn, sizeof(OPENFILENAME));
+								ofn.lStructSize = sizeof(OPENFILENAME);
+								ofn.hwndOwner = hDlg;
+								ofn.lpstrFile = filename;
+								ofn.nMaxFile = sizeof(filename);
+								ofn.lpstrFilter = "MIDI Files (*.mid;*.rmi)\0*.mid;*.rmi\0All Files (*.*)\0*.*\0";
+								ofn.nFilterIndex = 0;
+								ofn.lpstrFileTitle = NULL;
+								ofn.nMaxFileTitle = 0;
+								ofn.lpstrInitialDir = NULL;
+								ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+								i = GetOpenFileName(&ofn);
+								if (i)
+									load_midi(filename, hDlg);
+								/*else
+								{
+									i = CommDlgExtendedError();
+									itoa(i, filename, 10);
+									MessageBox(hwndApp, "argh!", filename, MB_ICONERROR);
+								}*/
+							}
+							break;
+						case IDC_ANALYSIS:
+							if (HIWORD(wParam) == BN_CLICKED)
+							{
+								ShellExecute(hDlg, "open", "notepad", analysis_file, NULL, SW_SHOWNORMAL);
+							}
+							break;
+						case IDC_CURRENT_TEXT:
+						case IDC_DISPLAY_TEXT:
+							if (HIWORD(wParam) == BN_CLICKED || HIWORD(wParam) == STN_CLICKED)
+							{
+								if (hwndText)
+									PostMessage(hwndText, WM_CLOSE, 0, 0);
+								//SetForegroundWindow(hwndText);
+								else
+									hwndText = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TEXT), hwndApp, (DLGPROC)TextDlg);
+							}
+							break;
+						case IDC_DISPLAY_TRACKS:
+							if (HIWORD(wParam) == BN_CLICKED)
+							{
+								if (hwndTracks)
+									PostMessage(hwndTracks, WM_CLOSE, 0, 0);
+								//SetForegroundWindow(hwndText);
+								else
+									hwndTracks = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TRACKS), hwndApp, (DLGPROC)TracksDlg);
+							}
+							break;
+						case IDC_DISPLAY_CHANNELS:
+							if (HIWORD(wParam) == BN_CLICKED)
+							{
+								if (hwndChannels)
+									PostMessage(hwndChannels, WM_CLOSE, 0, 0);
+								//SetForegroundWindow(hwndText);
+								else
+									hwndChannels = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_CHANNELS), hwndApp, (DLGPROC)ChannelsDlg);
+							}
+							break;
+						case IDC_DISPLAY_SYSEX:
+							if (HIWORD(wParam) == BN_CLICKED)
+							{
+								if (hwndSysex)
+									PostMessage(hwndSysex, WM_CLOSE, 0, 0);
+								//SetForegroundWindow(hwndText);
+								else
+									hwndSysex = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_SYSEX), hwndApp, (DLGPROC)SysexDlg);
+							}
+							break;
+						case IDM_OUTCONFIG:
+							DialogBox(ghInstance, MAKEINTRESOURCE(IDD_OUTCONFIG), hDlg, (DLGPROC)OutConfigDlg);
+							break;
+						case IDOK:
+							return TRUE;
+						case IDM_FILE_EXIT:
+						case IDCANCEL:
+							EndDialog(hDlg, 0);
+							return TRUE;
 					}
-					break;
-				case IDC_PLAY:
-					if (HIWORD(wParam) == BN_CLICKED)
-						if (!(ms.playing) && ms.filename && ms.filename[0])
-							_beginthread(playback_thread, 0, NULL);
-						else
-							if (ms.paused)
-								ms.paused = 0;
-					break;
-				case IDC_STOP:
-					if (HIWORD(wParam) == BN_CLICKED)
-						ms.stop_requested = 1;
-					break;
-				case IDC_PAUSE:
-					if (HIWORD(wParam) == BN_CLICKED)
-						ms.paused = !(ms.paused);
-					break;
-				case IDM_FILE_OPEN:
-				case IDC_OPEN:
-					if (HIWORD(wParam) == BN_CLICKED)
-					{
-						if (ms.playing)
-							ms.stop_requested = 1;
-						// Get the filename from the user with the common open file dialog
-						ZeroMemory(&ofn, sizeof(OPENFILENAME));
-						ofn.lStructSize = sizeof(OPENFILENAME);
-						ofn.hwndOwner = hDlg;
-						ofn.lpstrFile = filename;
-						ofn.nMaxFile = sizeof(filename);
-						ofn.lpstrFilter = "MIDI Files (*.mid;*.rmi)\0*.mid;*.rmi\0All Files (*.*)\0*.*\0";
-						ofn.nFilterIndex = 0;
-						ofn.lpstrFileTitle = NULL;
-						ofn.nMaxFileTitle = 0;
-						ofn.lpstrInitialDir = NULL;
-						ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-						i = GetOpenFileName(&ofn);
-						if (i)
-							load_midi(filename, hDlg);
-						/*else
-						{
-							i = CommDlgExtendedError();
-							itoa(i, filename, 10);
-							MessageBox(hwndApp, "argh!", filename, MB_ICONERROR);
-						}*/
-					}
-					break;
-				case IDC_ANALYSIS:
-					if (HIWORD(wParam) == BN_CLICKED)
-					{
-						ShellExecute(hDlg, "open", "notepad", analysis_file, NULL, SW_SHOWNORMAL);
-					}
-					break;
-				case IDC_CURRENT_TEXT:
-				case IDC_DISPLAY_TEXT:
-					if (HIWORD(wParam) == BN_CLICKED || HIWORD(wParam) == STN_CLICKED)
-					{
-						if (hwndText)
-							PostMessage(hwndText, WM_CLOSE, 0, 0);
-							//SetForegroundWindow(hwndText);
-						else
-							hwndText = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TEXT), hwndApp, (DLGPROC) TextDlg);
-					}
-					break;
-				case IDC_DISPLAY_TRACKS:
-					if (HIWORD(wParam) == BN_CLICKED)
-					{
-						if (hwndTracks)
-							PostMessage(hwndTracks, WM_CLOSE, 0, 0);
-							//SetForegroundWindow(hwndText);
-						else
-							hwndTracks = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_TRACKS), hwndApp, (DLGPROC) TracksDlg);
-					}
-					break;
-				case IDC_DISPLAY_CHANNELS:
-					if (HIWORD(wParam) == BN_CLICKED)
-					{
-						if (hwndChannels)
-							PostMessage(hwndChannels, WM_CLOSE, 0, 0);
-							//SetForegroundWindow(hwndText);
-						else
-							hwndChannels = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_CHANNELS), hwndApp, (DLGPROC) ChannelsDlg);
-					}
-					break;
-				case IDC_DISPLAY_SYSEX:
-					if (HIWORD(wParam) == BN_CLICKED)
-					{
-						if (hwndSysex)
-							PostMessage(hwndSysex, WM_CLOSE, 0, 0);
-							//SetForegroundWindow(hwndText);
-						else
-							hwndSysex = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_SYSEX), hwndApp, (DLGPROC) SysexDlg);
-					}
-					break;
-				case IDM_OUTCONFIG:
-					DialogBox(ghInstance, MAKEINTRESOURCE(IDD_OUTCONFIG), hDlg, (DLGPROC) OutConfigDlg);
-					break;
-				case IDOK:
-					return TRUE;
-				case IDM_FILE_EXIT:
-				case IDCANCEL:
-					EndDialog(hDlg, 0);
-					return TRUE;
-			}
 	}
 
 	return FALSE;
@@ -833,11 +833,11 @@ void enum_devices(HWND hwnd)
 	MIDIOUTCAPS outcaps;
 	int i, ret;
 	HWND hwndcb;
-	midi_device_t *dev, *ld = NULL;
+	midi_device_t* dev, * ld = NULL;
 
 	hwndcb = GetDlgItem(hwnd, IDC_MIDI_IN);
 	SendMessage(hwndcb, CB_RESETCONTENT, 0, 0);
-	SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM) "[None]");
+	SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM)"[None]");
 	indevs = midiInGetNumDevs();
 	for (i = 0; i < indevs; i++)
 	{
@@ -846,7 +846,7 @@ void enum_devices(HWND hwnd)
 			continue;
 
 		// Set up a device node for this device
-		dev = (midi_device_t *) calloc(1, sizeof(midi_device_t));
+		dev = (midi_device_t*)calloc(1, sizeof(midi_device_t));
 		dev->user_device_name = strdup(incaps.szPname);
 		dev->input_device = 1;
 		memcpy(&dev->incaps, &incaps, sizeof(MIDIINCAPS));
@@ -858,14 +858,14 @@ void enum_devices(HWND hwnd)
 		else
 			ld->next = dev;
 		ld = dev;
-		
-		SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM) incaps.szPname);
+
+		SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM)incaps.szPname);
 	}
-	SendMessage(hwndcb, CB_SETCURSEL, (WPARAM) midi_in_cb, 0);
+	SendMessage(hwndcb, CB_SETCURSEL, (WPARAM)midi_in_cb, 0);
 
 	hwndcb = GetDlgItem(hwnd, IDC_MIDI_OUT);
 	SendMessage(hwndcb, CB_RESETCONTENT, 0, 0);
-	SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM) "[None]");
+	SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM)"[None]");
 	outdevs = midiOutGetNumDevs();
 	for (i = 0; i < outdevs; i++)
 	{
@@ -874,7 +874,7 @@ void enum_devices(HWND hwnd)
 			continue;
 
 		// Set up a device node for this device
-		dev = (midi_device_t *) calloc(1, sizeof(midi_device_t));
+		dev = (midi_device_t*)calloc(1, sizeof(midi_device_t));
 		dev->user_device_name = strdup(outcaps.szPname);
 		memcpy(&dev->outcaps, &outcaps, sizeof(MIDIOUTCAPS));
 		dev->usable = 1;
@@ -886,9 +886,9 @@ void enum_devices(HWND hwnd)
 			ld->next = dev;
 		ld = dev;
 
-		SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM) outcaps.szPname);
+		SendMessage(hwndcb, CB_ADDSTRING, 0, (LPARAM)outcaps.szPname);
 	}
-	SendMessage(hwndcb, CB_SETCURSEL, (WPARAM) midi_out_cb, 0);
+	SendMessage(hwndcb, CB_SETCURSEL, (WPARAM)midi_out_cb, 0);
 }
 
 void init_midi_in(HWND hwndcb)
@@ -903,11 +903,11 @@ void init_midi_in(HWND hwndcb)
 		return;
 	device--;
 
-	if (midiInOpen(&hin, device, (DWORD) MidiInProc, 0, CALLBACK_FUNCTION) != MMSYSERR_NOERROR)
+	if (midiInOpen(&hin, device, (DWORD)MidiInProc, 0, CALLBACK_FUNCTION) != MMSYSERR_NOERROR)
 	{
 		hin = NULL;
 		strcpy(msgbuf, "Unable to open MIDI-in device:\n");
-		SendMessage(hwndcb, CB_GETLBTEXT, (WPARAM) device + 1, (LPARAM) (LPCSTR) &msgbuf[strlen(msgbuf)]);
+		SendMessage(hwndcb, CB_GETLBTEXT, (WPARAM)device + 1, (LPARAM)(LPCSTR)&msgbuf[strlen(msgbuf)]);
 		MessageBox(hwndApp, msgbuf, "midiInOpen() failed...", MB_ICONERROR);
 	}
 	if (hin)
@@ -923,10 +923,7 @@ void init_midi_out(HWND hwndcb)
 	char msgbuf[256];
 
 	if (hout)
-	{
-		midiOutClose(hout);
-		hout = NULL;
-	}
+		return;
 
 	midi_out_cb = device = SendMessage(hwndcb, CB_GETCURSEL, 0, 0);
 	if (!device)
@@ -969,8 +966,11 @@ void close_midi_out(void)
 	if (hout)
 	{
 		all_notes_off();
-		midiOutReset(hout);
-		while (midiOutClose(hout) != MMSYSERR_NOERROR && i++ < 10)
+		auto hout_copy = hout;
+		hout = NULL;
+
+		midiOutReset(hout_copy);
+		while (midiOutClose(hout_copy) != MMSYSERR_NOERROR && i++ < 10)
 			Sleep(200);
 
 		if (i == 10)
@@ -979,7 +979,7 @@ void close_midi_out(void)
 		}
 
 		kShortMsg = _DefaultOutShortMsg;
-		hout = NULL;
+		hout_copy = NULL;
 	}
 }
 
@@ -992,13 +992,13 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 	// Perform global velocity modulation
 	if (velocity && ms.mod_velocity) [[unlikely]]
 	{
-		i = (signed int) velocity;
+		i = (signed int)velocity;
 		i += ms.mod_velocity;
 		if (i < 0)
 			i = 0;
 		if (i > 127)
 			i = 127;
-		velocity = (unsigned char) i;
+		velocity = (unsigned char)i;
 	}
 	// Perform global pitch modulation
 	if (channel != 9 && ms.channels[channel].last_bank != 127) [[unlikely]]
@@ -1057,10 +1057,10 @@ void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwP
 	switch (wMsg)
 	{
 		case MIM_OPEN:
-//			printf("MIDI input opened\n");
+			//			printf("MIDI input opened\n");
 			break;
 		case MIM_CLOSE:
-//			printf("MIDI input closed\n");
+			//			printf("MIDI input closed\n");
 			break;
 		case MIM_DATA:
 			//printf("Data: %d  Timestamp: %d\n", dwParam1, dwParam2);
@@ -1092,14 +1092,14 @@ void CALLBACK MidiInProc(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwP
 			}
 			if (hwndChannels)
 				PostMessage(hwndChannels, WMAPP_REFRESH_CHANNELS, 0, 0);
-//			printf("Channel: %d  Event: %d  Byte1: %d  Byte2: %d\n", channel, event, byte1, byte2);
-//			send_midi_data(dwParam1);
+			//			printf("Channel: %d  Event: %d  Byte1: %d  Byte2: %d\n", channel, event, byte1, byte2);
+			//			send_midi_data(dwParam1);
 			break;
 		default:
-//			printf("Unknown MIDI IN message: %d - %d - %d\n", wMsg, dwParam1, dwParam2);
+			//			printf("Unknown MIDI IN message: %d - %d - %d\n", wMsg, dwParam1, dwParam2);
 			if (hout)
 				kShortMsg(dwParam1);
-//			send_midi_data(dwParam1);
+			//			send_midi_data(dwParam1);
 	}
 }
 
@@ -1115,12 +1115,12 @@ unsigned int read_int(const unsigned char* ptr)
 
 static bbb_mmap mmap{};
 
-int load_midi(char *filename, HWND hDlg)
+int load_midi(char* filename, HWND hDlg)
 {
-	FILE *outfile = NULL;
-	char *MThd = "MThd";
-	char *MTrk = "MTrk";
-	char *RIFF = "RIFF";
+	FILE* outfile = NULL;
+	char* MThd = "MThd";
+	char* MTrk = "MTrk";
+	char* RIFF = "RIFF";
 	//unsigned char *text;
 	char buf[1024];
 	unsigned int track = 0, i, len, endtrack = 0;
@@ -1193,93 +1193,93 @@ int load_midi(char *filename, HWND hDlg)
 
 	__try
 	{
-	if (ms.perform_analysis)
-		fprintf(outfile, "Analysis of %s\n\n", filename);
-
-	const unsigned char* begining = mmap.begin();
-
-	// Check to see if the "MThd" ID is correct
-	if (memcmp(MThd, begining, 4))
-	{
-		MessageBox(hwndApp, "Non \"MThd\" midi files are not supported.", filename, MB_ICONERROR);
-		return 1;
-	}
-
-	// Read the header size
-	mh.header_size = read_int(begining + 4);
-	if (ms.perform_analysis)
-		fprintf(outfile, "Header size: %d bytes\n", mh.header_size);
-
-	// Identify the file format
-	mh.file_format = read_short(begining + 8);
-	if (ms.perform_analysis)
-	{
-		fprintf(outfile, "File format: ");
-		switch (mh.file_format)
-		{
-			case 0: fprintf(outfile, "Type 0: Single-track\n"); break;
-			case 1: fprintf(outfile, "Type 1: Multiple tracks, synchronous\n"); break;
-			case 2: fprintf(outfile, "Type 2: Multiple tracks, asynchronous\n"); break;
-			default: fprintf(outfile, "Unknown (%d)", mh.file_format);
-				sprintf(buf, "Unknown MIDI file type: %d", mh.file_format);
-				MessageBox(hwndApp, buf, "TMIDI Error", MB_ICONERROR);
-				return 1;
-		}
-	}
-
-	// Output other information present in the header
-	mh.num_tracks = read_short(begining + 10);
-	mh.num_ticks = read_short(begining + 12);
-	if (ms.perform_analysis)
-	{
-		fprintf(outfile, "Number of tracks: %d\n", mh.num_tracks);
-		fprintf(outfile, "Ticks per quarter note: %d\n", mh.num_ticks);
-	}
-
-	// Allocate track headers
-	th = (track_header_t *)calloc(mh.num_tracks, sizeof(track_header_t));
-
-	mmap.seekg(14);
-	// Read tracks
-	while (!mmap.eof())
-	{
-		auto track_begin = mmap.ptr();
-		mmap.seekg(mmap.tellg() + 8);
-		// Read the track header
-		if (mmap.eof())
-			continue;
-
-		// Check to see if the "MTrk" ID is correct
-		if (memcmp(MTrk, track_begin, 4))
-		{
-			if (ms.perform_analysis)
-				fprintf(outfile, "Track header %d is not correct because it does not begin with \"MTrk\".\n", track + 1);
-			if (track < mh.num_tracks)
-			{
-				sprintf(buf, "Track header %d is not correct because it does not begin with \"MTrk\"", track + 1);
-				MessageBox(hwndApp, buf, "TMIDI Warning", MB_ICONWARNING);
-			}
-			break;
-		}
-		// Read track length in bytes
-		th[track].length = read_int(track_begin + 4);
 		if (ms.perform_analysis)
-			fprintf(outfile, "\n---- Track %d (%d bytes) ----\n\n", track + 1, th[track].length);
+			fprintf(outfile, "Analysis of %s\n\n", filename);
 
-		// Read the track data into memory
-		th[track].data = const_cast<unsigned char*>(track_begin + 8);
-		mmap.seekg(mmap.tellg() + th[track].length);
+		const unsigned char* begining = mmap.begin();
 
-		track++;
-		if (track >= MAX_MIDI_TRACKS)
+		// Check to see if the "MThd" ID is correct
+		if (memcmp(MThd, begining, 4))
 		{
-			sprintf(buf, "Warning: Max number of MIDI tracks reached (%d).\n\nI refuse to read any more from this file.", MAX_MIDI_TRACKS);
-			MessageBox(hwndApp, buf, "TMIDI Warning", MB_ICONWARNING);
-			break;
+			MessageBox(hwndApp, "Non \"MThd\" midi files are not supported.", filename, MB_ICONERROR);
+			return 1;
 		}
-	}
-	success = 1;
-	mmap.seekg(0);
+
+		// Read the header size
+		mh.header_size = read_int(begining + 4);
+		if (ms.perform_analysis)
+			fprintf(outfile, "Header size: %d bytes\n", mh.header_size);
+
+		// Identify the file format
+		mh.file_format = read_short(begining + 8);
+		if (ms.perform_analysis)
+		{
+			fprintf(outfile, "File format: ");
+			switch (mh.file_format)
+			{
+				case 0: fprintf(outfile, "Type 0: Single-track\n"); break;
+				case 1: fprintf(outfile, "Type 1: Multiple tracks, synchronous\n"); break;
+				case 2: fprintf(outfile, "Type 2: Multiple tracks, asynchronous\n"); break;
+				default: fprintf(outfile, "Unknown (%d)", mh.file_format);
+					sprintf(buf, "Unknown MIDI file type: %d", mh.file_format);
+					MessageBox(hwndApp, buf, "TMIDI Error", MB_ICONERROR);
+					return 1;
+			}
+		}
+
+		// Output other information present in the header
+		mh.num_tracks = read_short(begining + 10);
+		mh.num_ticks = read_short(begining + 12);
+		if (ms.perform_analysis)
+		{
+			fprintf(outfile, "Number of tracks: %d\n", mh.num_tracks);
+			fprintf(outfile, "Ticks per quarter note: %d\n", mh.num_ticks);
+		}
+
+		// Allocate track headers
+		th = (track_header_t*)calloc(mh.num_tracks, sizeof(track_header_t));
+
+		mmap.seekg(14);
+		// Read tracks
+		while (!mmap.eof())
+		{
+			auto track_begin = mmap.ptr();
+			mmap.seekg(mmap.tellg() + 8);
+			// Read the track header
+			if (mmap.eof())
+				continue;
+
+			// Check to see if the "MTrk" ID is correct
+			if (memcmp(MTrk, track_begin, 4))
+			{
+				if (ms.perform_analysis)
+					fprintf(outfile, "Track header %d is not correct because it does not begin with \"MTrk\".\n", track + 1);
+				if (track < mh.num_tracks)
+				{
+					sprintf(buf, "Track header %d is not correct because it does not begin with \"MTrk\"", track + 1);
+					MessageBox(hwndApp, buf, "TMIDI Warning", MB_ICONWARNING);
+				}
+				break;
+			}
+			// Read track length in bytes
+			th[track].length = read_int(track_begin + 4);
+			if (ms.perform_analysis)
+				fprintf(outfile, "\n---- Track %d (%d bytes) ----\n\n", track + 1, th[track].length);
+
+			// Read the track data into memory
+			th[track].data = const_cast<unsigned char*>(track_begin + 8);
+			mmap.seekg(mmap.tellg() + th[track].length);
+
+			track++;
+			if (track >= MAX_MIDI_TRACKS)
+			{
+				sprintf(buf, "Warning: Max number of MIDI tracks reached (%d).\n\nI refuse to read any more from this file.", MAX_MIDI_TRACKS);
+				MessageBox(hwndApp, buf, "TMIDI Warning", MB_ICONWARNING);
+				break;
+			}
+		}
+		success = 1;
+		mmap.seekg(0);
 	}
 	__finally
 	{
@@ -1311,7 +1311,7 @@ int load_midi(char *filename, HWND hDlg)
 		}
 		else
 		{
-LoadFailed:
+		LoadFailed:
 			sprintf(buf, "Failed to load %s.", extract_filename(filename));
 			SetWindowText(hwndStatusBar, buf);
 			// Disable the "Display Analysis" button
@@ -1326,7 +1326,7 @@ LoadFailed:
 	return 0;
 }
 
-void reverse_endian_word(unsigned short int *word)
+void reverse_endian_word(unsigned short int* word)
 {
 	unsigned char high, low;
 
@@ -1335,12 +1335,12 @@ void reverse_endian_word(unsigned short int *word)
 	*word = MAKEWORD(high, low);
 }
 
-int read_bytes(FILE *fp, unsigned char *buf, int num)
+int read_bytes(FILE* fp, unsigned char* buf, int num)
 {
 	return fread(buf, num, 1, fp);
 }
 
-unsigned int read_int(FILE *fp)
+unsigned int read_int(FILE* fp)
 {
 	unsigned short high, low;
 
@@ -1350,7 +1350,7 @@ unsigned int read_int(FILE *fp)
 	return ((high << 16) + low);
 }
 
-unsigned short int read_short(FILE *fp)
+unsigned short int read_short(FILE* fp)
 {
 	unsigned char high, low;
 
@@ -1359,45 +1359,45 @@ unsigned short int read_short(FILE *fp)
 	return MAKEWORD(low, high);
 }
 
-unsigned int read_vlq(FILE *fp, unsigned int *offset)
+unsigned int read_vlq(FILE* fp, unsigned int* offset)
 {
-    unsigned int value;
-    unsigned char c, i = 0;
+	unsigned int value;
+	unsigned char c, i = 0;
 
-    if ((value = getc(fp)) & 0x80)
-    {
-        value &= 0x7f;
-        do
-        {
+	if ((value = getc(fp)) & 0x80)
+	{
+		value &= 0x7f;
+		do
+		{
 			value = (value << 7) + ((c = getc(fp)) & 0x7f);
 			(*offset)++;
-        } while (c & 0x80 && c != 255); // && ++i < 3);
-    }
+		} while (c & 0x80 && c != 255); // && ++i < 3);
+	}
 	(*offset)++;
 
-    return value;
+	return value;
 }
 
-int read_bytes_mem(track_header_t *th, unsigned char *buf, int num)
+int read_bytes_mem(track_header_t* th, unsigned char* buf, int num)
 {
 	memcpy(buf, th->dataptr, num);
-//	*(th->dataptr) += num;
+	//	*(th->dataptr) += num;
 	th->dataptr += num;
 
 	return num;
 }
 
-unsigned char read_byte_mem(track_header_t *th)
+unsigned char read_byte_mem(track_header_t* th)
 {
-//	unsigned char data;
+	//	unsigned char data;
 
-	//data = *(th->dataptr);
-	//th->dataptr++;
-	//return data;
+		//data = *(th->dataptr);
+		//th->dataptr++;
+		//return data;
 	return *(th->dataptr)++;
 }
 
-unsigned int read_int_mem(track_header_t *th)
+unsigned int read_int_mem(track_header_t* th)
 {
 	unsigned short high, low;
 
@@ -1407,12 +1407,12 @@ unsigned int read_int_mem(track_header_t *th)
 	return ((high << 16) + low);
 }
 
-unsigned short int read_short_mem(track_header_t *th)
+unsigned short int read_short_mem(track_header_t* th)
 {
 	unsigned char high, low;
 
-//	high = *(th->dataptr)++;
-//	low = *(th->dataptr)++;
+	//	high = *(th->dataptr)++;
+	//	low = *(th->dataptr)++;
 	high = *(th->dataptr);
 	th->dataptr++;
 	low = *(th->dataptr);
@@ -1421,30 +1421,30 @@ unsigned short int read_short_mem(track_header_t *th)
 }
 
 // 490
-inline unsigned int read_vlq_mem(track_header_t *th)
+inline unsigned int read_vlq_mem(track_header_t* th)
 {
-    unsigned int value;
-    unsigned char c;
-	unsigned char *p = th->dataptr;
+	unsigned int value;
+	unsigned char c;
+	unsigned char* p = th->dataptr;
 
-    if ((value = *p++) & 0x80)
-    {
-        value &= 0x7f;
-        do
-        {
+	if ((value = *p++) & 0x80)
+	{
+		value &= 0x7f;
+		do
+		{
 			value = (value << 7) + ((c = *p++) & 0x7f);
-        } while (c & 0x80);
-    }
+		} while (c & 0x80);
+	}
 	th->dataptr = p;
-    /*if ((value = *(th->dataptr)++) & 0x80)
-    {
-        value &= 0x7f;
-        do
-        {
+	/*if ((value = *(th->dataptr)++) & 0x80)
+	{
+		value &= 0x7f;
+		do
+		{
 			value = (value << 7) + ((c = *(th->dataptr)++) & 0x7f);
-        } while (c & 0x80);
-    }*/
-    return value;
+		} while (c & 0x80);
+	}*/
+	return value;
 }
 
 inline double GetHRTickCount(void)
@@ -1455,8 +1455,8 @@ inline double GetHRTickCount(void)
 	{
 		double d;
 
-		timeBeginPeriod(1); 
-		d = (double) timeGetTime();
+		timeBeginPeriod(1);
+		d = (double)timeGetTime();
 		timeEndPeriod(1);
 
 		return d;
@@ -1483,7 +1483,7 @@ int analyze_midi(void)
 	//double start_vlq, end_vlq, total_vlq = 0.0f;
 	char buf[256];
 	int first_pass;
-	midi_text_t *p;
+	midi_text_t* p;
 	static HANDLE standard_image = NULL;
 
 	// Clear tic marks in the song position slider
@@ -1494,7 +1494,7 @@ int analyze_midi(void)
 	ms.stop_requested = 0;
 	//set_tempo(50000 / 1000);
 	ms.tempo = 500000 / 1000;
-	ms.tick_length = (double) ms.tempo / (double) mh.num_ticks;
+	ms.tick_length = (double)ms.tempo / (double)mh.num_ticks;
 	ms.found_note_on = 0;
 	ms.first_note_on = 0.0f;
 	ms.analyzing = 1;
@@ -1559,7 +1559,7 @@ int analyze_midi(void)
 			// Read the next event's delta time
 			if (first_pass)
 			{
-				th[i].dt = (double) read_vlq_mem(&th[i]) * ms.tick_length;
+				th[i].dt = (double)read_vlq_mem(&th[i]) * ms.tick_length;
 				th[i].trigger = curtime + th[i].dt;
 			}
 
@@ -1590,10 +1590,10 @@ int analyze_midi(void)
 					th[i].enabled = FALSE;
 					break;
 				}
-				
+
 				// Read the next event's delta time
 				//start_vlq = GetHRTickCount();
-				th[i].dt = (double) read_vlq_mem(&th[i]) * ms.tick_length;
+				th[i].dt = (double)read_vlq_mem(&th[i]) * ms.tick_length;
 				//end_vlq = GetHRTickCount();
 				//total_vlq += end_vlq - start_vlq;
 				th[i].trigger += th[i].dt;
@@ -1613,7 +1613,7 @@ int analyze_midi(void)
 	// Analysis complete
 	end_analyze = GetHRTickCount();
 	// Store song length and # of events
-	ms.song_length = (int) (curtime / 1000.0f);
+	ms.song_length = (int)(curtime / 1000.0f);
 	ms.num_events = num_events;
 	// Set up velocity mod slider
 	SendDlgItemMessage(hwndApp, IDC_VELOCITY_SLIDER, TBM_SETRANGE, TRUE, MAKELONG(0, 128));
@@ -1641,9 +1641,9 @@ int analyze_midi(void)
 	// Set tic marks for text events in the song position slider
 	for (p = midi_text_events; p; p = p->next)
 	{
-		i = (int) p->midi_time;
+		i = (int)p->midi_time;
 		if (i && i != ms.song_length)
-			SendMessage(GetDlgItem(hwndApp, IDC_SONG_SLIDER), TBM_SETTIC, 0, (LPARAM) (LONG) i);
+			SendMessage(GetDlgItem(hwndApp, IDC_SONG_SLIDER), TBM_SETTIC, 0, (LPARAM)(LONG)i);
 	}
 	// Set up the MIDI standard bitmap
 	if (standard_image)
@@ -1652,7 +1652,7 @@ int analyze_midi(void)
 		standard_image = NULL;
 	}
 	// If we haven't decided on a standard, check the filename/path for "MT32" or "MT-32"
-	if (ms.midi_standard == MIDI_STANDARD_NONE && 
+	if (ms.midi_standard == MIDI_STANDARD_NONE &&
 		(stristr(ms.filename, "MT32") || stristr(ms.filename, "MT-32")))
 		ms.midi_standard = MIDI_STANDARD_MT32;
 	// Choose an appropriate MIDI standard bitmap
@@ -1675,8 +1675,8 @@ int analyze_midi(void)
 				standard_image = LoadImage(ghInstance, MAKEINTRESOURCE(IDB_MTLOGO), IMAGE_BITMAP, 0, 0, 0);
 				break;
 		}
-		SendDlgItemMessage(hwndApp, IDC_MIDI_LOGO, STM_SETIMAGE, 
-			(WPARAM) IMAGE_BITMAP, (LPARAM) standard_image);
+		SendDlgItemMessage(hwndApp, IDC_MIDI_LOGO, STM_SETIMAGE,
+			(WPARAM)IMAGE_BITMAP, (LPARAM)standard_image);
 		ShowWindow(GetDlgItem(hwndApp, IDC_MIDI_LOGO), SW_SHOW);
 	}
 	// Decide which instrument names to use
@@ -1783,7 +1783,7 @@ void deferred_gui_update_call()
 	update_display(NULL);
 }
 
-void __cdecl playback_thread(void *spointer)
+void __cdecl playback_thread(void* spointer)
 {
 	int tracks = mh.num_tracks;
 	int i, j, polyphony;
@@ -1792,7 +1792,7 @@ void __cdecl playback_thread(void *spointer)
 	double curtime, starttime, pausetime, tmptime, timediff, displaytime;
 	double nexttrigger;
 	char buf[256];
-	char *ch;
+	char* ch;
 	int first_pass;
 	int tracks_active;
 	int seeking = 0;
@@ -1874,9 +1874,9 @@ void __cdecl playback_thread(void *spointer)
 
 	while (ms.loop_count--)
 	{
-BeginPlayback:
+	BeginPlayback:
 		// Initialize tempo
-		set_tempo((int) (60000000.0f / ms.tempo));
+		set_tempo((int)(60000000.0f / ms.tempo));
 		/*sprintf(buf, "Tempo: %.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / ms.tempo);
 		SetDlgItemText(hwndApp, IDC_TICK, buf);
 		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, FALSE, (int) (60000000.0f / ms.tempo));
@@ -1891,7 +1891,7 @@ BeginPlayback:
 		ms.finished_naturally = FALSE;
 		ms.stop_requested = 0;
 		ms.tempo = 500000 / 1000;
-		ms.tick_length = (double) ms.tempo / (double) mh.num_ticks;
+		ms.tick_length = (double)ms.tempo / (double)mh.num_ticks;
 		ms.peak_polyphony = 0;
 		ms.current_text[0] = '\0';
 		ms.title_displayed = 0;
@@ -1983,7 +1983,7 @@ BeginPlayback:
 				//if (th[i].trigger == 0.0f)
 				if (first_pass)
 				{
-					th[i].dt = (double) read_vlq_mem(&th[i]) * ms.tick_length;
+					th[i].dt = (double)read_vlq_mem(&th[i]) * ms.tick_length;
 					th[i].trigger = curtime + th[i].dt;
 				}
 
@@ -2006,9 +2006,9 @@ BeginPlayback:
 					// Check for end of track
 					if (!(th[i].enabled))
 						break;
-					
+
 					// Read the next event's delta time
-					th[i].dt = (double) read_vlq_mem(&th[i]) * ms.tick_length;
+					th[i].dt = (double)read_vlq_mem(&th[i]) * ms.tick_length;
 					th[i].trigger += th[i].dt;
 				}
 				// Check for end of track
@@ -2073,7 +2073,7 @@ BeginPlayback:
 						th[i].trigger -= timediff;
 					// Calculate corrected start time and elapsed time
 					ms.starttime = starttime = curtime - timediff;
-					elapsed = (int) (curtime - ms.starttime);
+					elapsed = (int)(curtime - ms.starttime);
 					ms.curtime = curtime;
 					// Reset seek state flags
 					seeking = ms.seeking = ms.analyzing = 0;
@@ -2128,7 +2128,8 @@ BeginPlayback:
 	if (thread.joinable())
 		thread.join();
 
-	midiOutReset(hout);
+	if (hout)
+		midiOutReset(hout);
 	close_midi_out();
 
 	// Reset the track info displays
@@ -2180,11 +2181,11 @@ BeginPlayback:
 	PostMessage(hwndApp, WMAPP_DONE_PLAYING, 0, 0);
 }
 
-int process_midi_event(track_header_t *th)
+int process_midi_event(track_header_t* th)
 {
-	const char *MThd = "MThd";
-	const char *MTrk = "MTrk";
-	unsigned char *text;
+	const char* MThd = "MThd";
+	const char* MTrk = "MTrk";
+	unsigned char* text;
 	unsigned char id[4];
 	char eventname[128];
 	char buf[2048];
@@ -2194,8 +2195,8 @@ int process_midi_event(track_header_t *th)
 	unsigned int intd;
 	unsigned short pitchbend;
 	int channel;
-	unsigned char *cmdptr = th->dataptr;		// Pointer to the beginning of this event
-	unsigned char *sysexptr;					// Pointer to beginning of sysex data
+	unsigned char* cmdptr = th->dataptr;		// Pointer to the beginning of this event
+	unsigned char* sysexptr;					// Pointer to beginning of sysex data
 
 	// Read the MIDI event command
 	cmd = read_byte_mem(th);
@@ -2221,9 +2222,9 @@ int process_midi_event(track_header_t *th)
 		if (len > (th->dataptr - th->data) + th->length)
 		{
 			sprintf(buf, "Meta-event %02X at track %d offset %d has length %d, "
-						 "which would exceed track length of %d.\n\n"
-						 "Conclusion: %s is corrupt.", 
-						 cmd, th->tracknum, cmdptr - th->data, len, th->length, ms.filename);
+				"which would exceed track length of %d.\n\n"
+				"Conclusion: %s is corrupt.",
+				cmd, th->tracknum, cmdptr - th->data, len, th->length, ms.filename);
 			MessageBox(hwndApp, buf, "TMIDI Read Error", MB_ICONERROR);
 			return 1;
 		}
@@ -2234,7 +2235,7 @@ int process_midi_event(track_header_t *th)
 		{
 			case 0x00:		// Sequence number
 				intd = read_short_mem(th);
-//				dprintf("Set Sequence number: %d\n", intd);
+				//				dprintf("Set Sequence number: %d\n", intd);
 				break;
 			case 0x01:		// Text
 			case 0x02:		// Copyright info
@@ -2246,35 +2247,35 @@ int process_midi_event(track_header_t *th)
 				strcpy(eventname, midi_text_event_descriptions[cmd]);
 
 				// Read the text
-				text = (unsigned char *) malloc(len + 1);
+				text = (unsigned char*)malloc(len + 1);
 				read_bytes_mem(th, text, len);
 				text[len] = '\0';
 
 				// If it's a track name, save it
 				if (cmd == 3 || cmd == 4)
 				{
-					strncpy(th->name, (char *) text, sizeof(th->name));
+					strncpy(th->name, (char*)text, sizeof(th->name));
 					th->name[sizeof(th->name) - 1] = '\0';
 				}
 				else
 					if (!th->name[0])
 					{
-						strncpy(th->name, (char *) text, sizeof(th->name));
+						strncpy(th->name, (char*)text, sizeof(th->name));
 						th->name[sizeof(th->name) - 1] = '\0';
 					}
 
 				// Save the text in the list of text events
 				if (ms.analyzing && !ms.seeking)
-					new_midi_text((char *) text, cmd, (ms.curtime - ms.starttime) / 1000.0f, th->tracknum, cmdptr - th->data);
+					new_midi_text((char*)text, cmd, (ms.curtime - ms.starttime) / 1000.0f, th->tracknum, cmdptr - th->data);
 				else
 				{
 					// Text to speech, heheh
 					//if (cmd == 5)
 					//	speak("%s", text);
 					if (cmd == 5 && ms.current_text[strlen(ms.current_text) - 1] == '-')
-						strcat(ms.current_text, (char *) text);
+						strcat(ms.current_text, (char*)text);
 					else
-						strncpy(ms.current_text, (char *) text, sizeof(ms.current_text));
+						strncpy(ms.current_text, (char*)text, sizeof(ms.current_text));
 					if (!(cmd == 3 && ms.title_displayed) || (cmd == 3 && text[0] == '\"'))
 					{
 						//if ((((cmd == 5) || (cmd == 6)) && (!ms.title_displayed || ms.curtime - ms.starttime > 500.0f)) || (cmd == 3 && text[0] == '\"') || ((cmd != 3 && (!(ms.title_displayed) || ms.curtime - ms.starttime > 3000.0f)) || ((cmd == 3 || cmd == 6) && (!(ms.title_displayed) || ms.curtime - ms.starttime > 3000.0f))))
@@ -2289,7 +2290,7 @@ int process_midi_event(track_header_t *th)
 								if (!blank)
 								{
 									//if (!ms.seeking)	// FIXME: don't go through all text while seeking...
-										SetDlgItemText(hwndApp, IDC_CURRENT_TEXT, ms.current_text);
+									SetDlgItemText(hwndApp, IDC_CURRENT_TEXT, ms.current_text);
 									ms.title_displayed = 1;
 								}
 							}
@@ -2311,7 +2312,7 @@ int process_midi_event(track_header_t *th)
 				//fprintf(outfile, "MIDI Port: %d\n", d1);
 				break;
 			case 0x2F:		// End of track
-//				//fprintf(outfile, "End of track\n");
+				//				//fprintf(outfile, "End of track\n");
 				sprintf(buf, "End of track %d\n", th->tracknum);
 				OutputDebugString(buf);
 				th->enabled = 0;
@@ -2361,8 +2362,8 @@ int process_midi_event(track_header_t *th)
 				//fprintf(outfile, "Meta-event, unknown command %X length %d: ", cmd, len);
 				for (i = 0; i < len; i++)
 					read_byte_mem(th);
-//					fputc(read_byte_mem(th), outfile);
-				//fprintf(outfile, "\n");
+				//					fputc(read_byte_mem(th), outfile);
+								//fprintf(outfile, "\n");
 		}
 		if (text)
 		{
@@ -2465,19 +2466,19 @@ int process_midi_event(track_header_t *th)
 				intd = read_short_mem(th);
 				d2 = LOBYTE(intd);
 				d1 = HIBYTE(intd);
-				pitchbend = (unsigned short) d2;
+				pitchbend = (unsigned short)d2;
 				pitchbend <<= 7;
-				pitchbend |= (unsigned short) d1;
+				pitchbend |= (unsigned short)d1;
 				if (!ms.analyzing)
 				{
 					kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
-					ms.channels[channel].last_pitch_bend = th->last_pitch_bend = (signed int) pitchbend - MAX_PITCH_BEND;
+					ms.channels[channel].last_pitch_bend = th->last_pitch_bend = (signed int)pitchbend - MAX_PITCH_BEND;
 				}
 				else
 				{
 					// Keep track of the highest pitch bend value used in this song
-					if (abs((signed int) pitchbend - MAX_PITCH_BEND) > ms.highest_pitch_bend)
-						ms.highest_pitch_bend = abs((signed int) pitchbend - MAX_PITCH_BEND);
+					if (abs((signed int)pitchbend - MAX_PITCH_BEND) > ms.highest_pitch_bend)
+						ms.highest_pitch_bend = abs((signed int)pitchbend - MAX_PITCH_BEND);
 				}
 				//fprintf(outfile, "Pitch Wheel, amount %d\n", intd);
 				break;
@@ -2501,9 +2502,9 @@ int process_midi_event(track_header_t *th)
 						if (len > (th->dataptr - th->data) + th->length)
 						{
 							sprintf(buf, "Sysex data at track %d offset %d has length %d, "
-										 "which would exceed track length of %d.\n\n"
-										 "Conclusion: %s is corrupt.", 
-										 th->tracknum, cmdptr - th->data, len, th->length, ms.filename);
+								"which would exceed track length of %d.\n\n"
+								"Conclusion: %s is corrupt.",
+								th->tracknum, cmdptr - th->data, len, th->length, ms.filename);
 							MessageBox(hwndApp, buf, "TMIDI Read Error", MB_ICONERROR);
 							return 1;
 						}
@@ -2522,8 +2523,8 @@ int process_midi_event(track_header_t *th)
 							if (!(ms.midi_standard == MIDI_STANDARD_MT32 && ms.seeking))
 								output_sysex_data(channel, sysexptr, len);
 						}
-							//fprintf(outfile, "%02X ", read_byte_mem(th));
-						//fprintf(outfile, "\n");
+						//fprintf(outfile, "%02X ", read_byte_mem(th));
+					//fprintf(outfile, "\n");
 						break;
 					case 0x08:
 						//fprintf(outfile, "System Message: Timing clock used when synchronization is required.\n");
@@ -2537,8 +2538,8 @@ int process_midi_event(track_header_t *th)
 					case 0x0C:
 						//fprintf(outfile, "System Message: Stop a sequence\n");
 						break;
-					//default:
-						//fprintf(outfile, "System Message: Unknown (%d)\n", LONYBBLE(cmd));
+						//default:
+							//fprintf(outfile, "System Message: Unknown (%d)\n", LONYBBLE(cmd));
 				}
 				break;
 			default:
@@ -2556,51 +2557,51 @@ void read_registry_settings(void)
 	unsigned long i;
 
 	i = sizeof(midi_in_cb);
-	RegQueryValueEx(key, "midi_in_cb", 0, NULL, (BYTE *) &midi_in_cb, (unsigned long *) &i);
+	RegQueryValueEx(key, "midi_in_cb", 0, NULL, (BYTE*)&midi_in_cb, (unsigned long*)&i);
 	i = sizeof(midi_out_cb);
-	RegQueryValueEx(key, "midi_out_cb", 0, NULL, (BYTE *) &midi_out_cb, (unsigned long *) &i);
+	RegQueryValueEx(key, "midi_out_cb", 0, NULL, (BYTE*)&midi_out_cb, (unsigned long*)&i);
 	i = sizeof(alwaysCheckAssociations);
-	RegQueryValueEx(key, "alwaysCheckAssociations", 0, NULL, (BYTE *) &alwaysCheckAssociations, (unsigned long *) &i);
+	RegQueryValueEx(key, "alwaysCheckAssociations", 0, NULL, (BYTE*)&alwaysCheckAssociations, (unsigned long*)&i);
 	i = sizeof(appRectSaved);
-	RegQueryValueEx(key, "appRectSaved", 0, NULL, (BYTE *) &appRectSaved, (unsigned long *) &i);
+	RegQueryValueEx(key, "appRectSaved", 0, NULL, (BYTE*)&appRectSaved, (unsigned long*)&i);
 	i = sizeof(textRectSaved);
-	RegQueryValueEx(key, "textRectSaved", 0, NULL, (BYTE *) &textRectSaved, (unsigned long *) &i);
+	RegQueryValueEx(key, "textRectSaved", 0, NULL, (BYTE*)&textRectSaved, (unsigned long*)&i);
 	i = sizeof(tracksRectSaved);
-	RegQueryValueEx(key, "tracksRectSaved", 0, NULL, (BYTE *) &tracksRectSaved, (unsigned long *) &i);
+	RegQueryValueEx(key, "tracksRectSaved", 0, NULL, (BYTE*)&tracksRectSaved, (unsigned long*)&i);
 	i = sizeof(channelsRectSaved);
-	RegQueryValueEx(key, "channelsRectSaved", 0, NULL, (BYTE *) &channelsRectSaved, (unsigned long *) &i);
+	RegQueryValueEx(key, "channelsRectSaved", 0, NULL, (BYTE*)&channelsRectSaved, (unsigned long*)&i);
 	i = sizeof(tracksRectSaved);
-	RegQueryValueEx(key, "sysexRectSaved", 0, NULL, (BYTE *) &sysexRectSaved, (unsigned long *) &i);
+	RegQueryValueEx(key, "sysexRectSaved", 0, NULL, (BYTE*)&sysexRectSaved, (unsigned long*)&i);
 	i = sizeof(appRect);
-	RegQueryValueEx(key, "appRect", 0, NULL, (BYTE *) &appRect, (unsigned long *) &i);
+	RegQueryValueEx(key, "appRect", 0, NULL, (BYTE*)&appRect, (unsigned long*)&i);
 	i = sizeof(textRect);
-	RegQueryValueEx(key, "textRect", 0, NULL, (BYTE *) &textRect, (unsigned long *) &i);
+	RegQueryValueEx(key, "textRect", 0, NULL, (BYTE*)&textRect, (unsigned long*)&i);
 	i = sizeof(tracksRect);
-	RegQueryValueEx(key, "tracksRect", 0, NULL, (BYTE *) &tracksRect, (unsigned long *) &i);
+	RegQueryValueEx(key, "tracksRect", 0, NULL, (BYTE*)&tracksRect, (unsigned long*)&i);
 	i = sizeof(channelsRect);
-	RegQueryValueEx(key, "channelsRect", 0, NULL, (BYTE *) &channelsRect, (unsigned long *) &i);
+	RegQueryValueEx(key, "channelsRect", 0, NULL, (BYTE*)&channelsRect, (unsigned long*)&i);
 	i = sizeof(sysexRect);
-	RegQueryValueEx(key, "sysexRect", 0, NULL, (BYTE *) &sysexRect, (unsigned long *) &i);
+	RegQueryValueEx(key, "sysexRect", 0, NULL, (BYTE*)&sysexRect, (unsigned long*)&i);
 	i = sizeof(genericTextRect);
-	RegQueryValueEx(key, "genericTextRect", 0, NULL, (BYTE *) &genericTextRect, (unsigned long *) &i);
+	RegQueryValueEx(key, "genericTextRect", 0, NULL, (BYTE*)&genericTextRect, (unsigned long*)&i);
 }
 
 void write_registry_settings(void)
 {
-	RegSetValueEx(key, "midi_in_cb", 0, REG_DWORD, (CONST BYTE *) &midi_in_cb, sizeof(midi_in_cb));
-	RegSetValueEx(key, "midi_out_cb", 0, REG_DWORD, (CONST BYTE *) &midi_out_cb, sizeof(midi_out_cb));
-	RegSetValueEx(key, "alwaysCheckAssociations", 0, REG_DWORD, (CONST BYTE *) &alwaysCheckAssociations, sizeof(alwaysCheckAssociations));
-	RegSetValueEx(key, "appRectSaved", 0, REG_DWORD, (CONST BYTE *) &appRectSaved, sizeof(appRectSaved));
-	RegSetValueEx(key, "textRectSaved", 0, REG_DWORD, (CONST BYTE *) &textRectSaved, sizeof(textRectSaved));
-	RegSetValueEx(key, "tracksRectSaved", 0, REG_DWORD, (CONST BYTE *) &tracksRectSaved, sizeof(tracksRectSaved));
-	RegSetValueEx(key, "channelsRectSaved", 0, REG_DWORD, (CONST BYTE *) &channelsRectSaved, sizeof(channelsRectSaved));
-	RegSetValueEx(key, "sysexRectSaved", 0, REG_DWORD, (CONST BYTE *) &sysexRectSaved, sizeof(sysexRectSaved));
-	RegSetValueEx(key, "appRect", 0, REG_BINARY, (CONST BYTE *) &appRect, sizeof(appRect));
-	RegSetValueEx(key, "textRect", 0, REG_BINARY, (CONST BYTE *) &textRect, sizeof(textRect));
-	RegSetValueEx(key, "tracksRect", 0, REG_BINARY, (CONST BYTE *) &tracksRect, sizeof(tracksRect));
-	RegSetValueEx(key, "channelsRect", 0, REG_BINARY, (CONST BYTE *) &channelsRect, sizeof(channelsRect));
-	RegSetValueEx(key, "sysexRect", 0, REG_BINARY, (CONST BYTE *) &sysexRect, sizeof(sysexRect));
-	RegSetValueEx(key, "genericTextRect", 0, REG_BINARY, (CONST BYTE *) &genericTextRect, sizeof(genericTextRect));
+	RegSetValueEx(key, "midi_in_cb", 0, REG_DWORD, (CONST BYTE*) & midi_in_cb, sizeof(midi_in_cb));
+	RegSetValueEx(key, "midi_out_cb", 0, REG_DWORD, (CONST BYTE*) & midi_out_cb, sizeof(midi_out_cb));
+	RegSetValueEx(key, "alwaysCheckAssociations", 0, REG_DWORD, (CONST BYTE*) & alwaysCheckAssociations, sizeof(alwaysCheckAssociations));
+	RegSetValueEx(key, "appRectSaved", 0, REG_DWORD, (CONST BYTE*) & appRectSaved, sizeof(appRectSaved));
+	RegSetValueEx(key, "textRectSaved", 0, REG_DWORD, (CONST BYTE*) & textRectSaved, sizeof(textRectSaved));
+	RegSetValueEx(key, "tracksRectSaved", 0, REG_DWORD, (CONST BYTE*) & tracksRectSaved, sizeof(tracksRectSaved));
+	RegSetValueEx(key, "channelsRectSaved", 0, REG_DWORD, (CONST BYTE*) & channelsRectSaved, sizeof(channelsRectSaved));
+	RegSetValueEx(key, "sysexRectSaved", 0, REG_DWORD, (CONST BYTE*) & sysexRectSaved, sizeof(sysexRectSaved));
+	RegSetValueEx(key, "appRect", 0, REG_BINARY, (CONST BYTE*) & appRect, sizeof(appRect));
+	RegSetValueEx(key, "textRect", 0, REG_BINARY, (CONST BYTE*) & textRect, sizeof(textRect));
+	RegSetValueEx(key, "tracksRect", 0, REG_BINARY, (CONST BYTE*) & tracksRect, sizeof(tracksRect));
+	RegSetValueEx(key, "channelsRect", 0, REG_BINARY, (CONST BYTE*) & channelsRect, sizeof(channelsRect));
+	RegSetValueEx(key, "sysexRect", 0, REG_BINARY, (CONST BYTE*) & sysexRect, sizeof(sysexRect));
+	RegSetValueEx(key, "genericTextRect", 0, REG_BINARY, (CONST BYTE*) & genericTextRect, sizeof(genericTextRect));
 }
 
 // Sets the program override for a given channel
@@ -2639,16 +2640,16 @@ void set_channel_program(int channel, int program, int bank)
 		SetDlgItemText(hwndApp, IDC_T0 + channel, get_drum_kit_name(program));
 }
 
-char *get_drum_kit_name(int program)
+char* get_drum_kit_name(int program)
 {
 	int i;
-	char *ch;
+	char* ch;
 	static char buf[256];
 
-	for (i = 0; i < sizeof(drum_kit_names) / sizeof(char *); i++)
+	for (i = 0; i < sizeof(drum_kit_names) / sizeof(char*); i++)
 		if (atoi(drum_kit_names[i]) == program)
 			break;
-	if (i == sizeof(drum_kit_names) / sizeof(char *))
+	if (i == sizeof(drum_kit_names) / sizeof(char*))
 		sprintf(buf, "Unknown drum kit (%d)", program);
 	else
 	{
@@ -2659,16 +2660,16 @@ char *get_drum_kit_name(int program)
 	return buf;
 }
 
-char *get_sysex_manufacturer_name(int id)
+char* get_sysex_manufacturer_name(int id)
 {
 	int i;
-	char *ch;
+	char* ch;
 	static char buf[256];
 
-	for (i = 0; i < sizeof(sysex_manufacturer_names) / sizeof(char *); i++)
+	for (i = 0; i < sizeof(sysex_manufacturer_names) / sizeof(char*); i++)
 		if (atoi(sysex_manufacturer_names[i]) == id)
 			break;
-	if (i == sizeof(sysex_manufacturer_names) / sizeof(char *))
+	if (i == sizeof(sysex_manufacturer_names) / sizeof(char*))
 		sprintf(buf, "Unknown (%d)", id);
 	else
 	{
@@ -2708,13 +2709,13 @@ void update_note_volume(char channel, char note, char volume)
 }
 
 // Update the background for a single channel
-void update_channel_background(HDC hdc, int i, channel_state_t *c)
+void update_channel_background(HDC hdc, int i, channel_state_t* c)
 {
 	int w;
 	HPEN holdpen = NULL;
 	RECT txtrect;
-	static HPEN whitepen = (struct HPEN__ *) GetStockObject(WHITE_PEN);
-	static HPEN blackpen = (struct HPEN__ *) GetStockObject(BLACK_PEN);
+	static HPEN whitepen = (struct HPEN__*)GetStockObject(WHITE_PEN);
+	static HPEN blackpen = (struct HPEN__*)GetStockObject(BLACK_PEN);
 	static char buf[256];
 	int v;
 
@@ -2723,7 +2724,7 @@ void update_channel_background(HDC hdc, int i, channel_state_t *c)
 	{
 		v = c->controllers[c->displayed_controller];
 		// Calculate the width of the displayed controller bar
-		w = (int) ((((float) v / 127.0)) * BAR_WIDTH);
+		w = (int)((((float)v / 127.0)) * BAR_WIDTH);
 		// Draw the displayed controller value bar
 		SelectObject(hdc, hControllerBrush);
 		Rectangle(hdc, (BAR_X - 1), BAR_Y + i * BAR_VSPACE, BAR_X + w, BAR_Y + i * BAR_VSPACE + BAR_HEIGHT);
@@ -2735,7 +2736,7 @@ void update_channel_background(HDC hdc, int i, channel_state_t *c)
 		// Draw a line to cover up the black line common to both rectangles (it contrasts too much)
 		if (w && w < BAR_WIDTH)
 		{
-			holdpen = (HPEN) GetCurrentObject(hdc, OBJ_PEN);
+			holdpen = (HPEN)GetCurrentObject(hdc, OBJ_PEN);
 			SelectObject(hdc, hNoteBackgroundPen);
 			MoveToEx(hdc, (BAR_X - 1) + w, BAR_Y + i * BAR_VSPACE + 1, NULL);
 			LineTo(hdc, (BAR_X - 1) + w, BAR_Y + i * BAR_VSPACE + BAR_HEIGHT - 1);
@@ -2753,9 +2754,9 @@ void update_channel_background(HDC hdc, int i, channel_state_t *c)
 		//if (v != -1)
 		//	sprintf(buf, "%s (%d)", controller_names[c->displayed_controller], c->controllers[c->displayed_controller]);
 		//else
-			sprintf(buf, "%s", controller_names[c->displayed_controller]);
+		sprintf(buf, "%s", controller_names[c->displayed_controller]);
 		DrawText(hdc, buf, strlen(buf), &txtrect, DT_LEFT | DT_VCENTER); // DT_END_ELLIPSIS
-//		SelectObject(hdc, holdpen);
+		//		SelectObject(hdc, holdpen);
 	}
 	else
 	{
@@ -2774,7 +2775,7 @@ void update_display(HDC hdc)
 	int hdc_specified = 0;
 	int i, j, note, vol, x, y, r, g, b, h, pb;
 	HPEN hpen, holdpen;
-	channel_state_t *c;
+	channel_state_t* c;
 
 	if (hdc)
 		hdc_specified = 1;
@@ -2819,7 +2820,7 @@ void update_display(HDC hdc)
 					if (i == 9)
 						r = g = b = 0;
 					else
-						hsv_to_rgb((float) c->normal_program * 360.0f / 128.0f, 1.0f, 1.0f, &r, &g, &b);
+						hsv_to_rgb((float)c->normal_program * 360.0f / 128.0f, 1.0f, 1.0f, &r, &g, &b);
 					// Darken the color and keep it within bounds
 					r -= 64;
 					if (r < 0)
@@ -2831,11 +2832,11 @@ void update_display(HDC hdc)
 					if (b < 0)
 						b = 0;
 					// Create a pen for this color and select it into the DC
-					holdpen = (HPEN) GetCurrentObject(hdc, OBJ_PEN);
+					holdpen = (HPEN)GetCurrentObject(hdc, OBJ_PEN);
 					hpen = CreatePen(PS_SOLID, 1, RGB(r, g, b));
 					SelectObject(hdc, hpen);
 					// Calculate the height of the bar
-					h = (int) (MAX_NOTE_HEIGHT * (float) vol / 127.0);
+					h = (int)(MAX_NOTE_HEIGHT * (float)vol / 127.0);
 					// Calculate the top of the bar
 					y = BAR_Y + i * BAR_VSPACE + 1 + (MAX_NOTE_HEIGHT - h); // / 2;
 					// Draw the note bar differently depending on whether or not this channel is being pitch-bended
@@ -2849,9 +2850,9 @@ void update_display(HDC hdc)
 					{
 						// Calculate the horizontal offset of the pitch bend
 						if (ms.highest_pitch_bend)
-							pb = (int) ((BAR_WIDTH / 10) * (float) c->last_pitch_bend / (float) ms.highest_pitch_bend);
+							pb = (int)((BAR_WIDTH / 10) * (float)c->last_pitch_bend / (float)ms.highest_pitch_bend);
 						else
-							pb = (int) ((BAR_WIDTH / 10) * (float) c->last_pitch_bend / MAX_PITCH_BEND);
+							pb = (int)((BAR_WIDTH / 10) * (float)c->last_pitch_bend / MAX_PITCH_BEND);
 						// Keep it within the boundaries of the bar
 						if (x + pb >= BAR_X + BAR_WIDTH - 2)
 							pb = BAR_X + BAR_WIDTH - x - 2;
@@ -2890,45 +2891,45 @@ void update_display(HDC hdc)
 /* hsv_to_rgb:
  *  Converts from HSV colorspace to RGB values.
  */
-void hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
+void hsv_to_rgb(float h, float s, float v, int* r, int* g, int* b)
 {
-   float f, x, y, z;
-   int i;
+	float f, x, y, z;
+	int i;
 
-   v *= 255.0f;
+	v *= 255.0f;
 
-   if (s == 0.0f) {
-      *r = *g = *b = (int)v;
-   }
-   else {
-      while (h < 0.0f)
-	  h += 360.0f;
-      h = (float) fmod(h, 360) / 60.0f;
-      i = (int) h;
-      f = h - (float) i;
-      x = v * (1.0f - s);
-      y = v * (1.0f - (s * f));
-      z = v * (1.0f - (s * (1.0f - f)));
+	if (s == 0.0f) {
+		*r = *g = *b = (int)v;
+	}
+	else {
+		while (h < 0.0f)
+			h += 360.0f;
+		h = (float)fmod(h, 360) / 60.0f;
+		i = (int)h;
+		f = h - (float)i;
+		x = v * (1.0f - s);
+		y = v * (1.0f - (s * f));
+		z = v * (1.0f - (s * (1.0f - f)));
 
-      switch (i) {
-	 case 0: *r = (int) v; *g = (int) z; *b = (int) x; break;
-	 case 1: *r = (int) y; *g = (int) v; *b = (int) x; break;
-	 case 2: *r = (int) x; *g = (int) v; *b = (int) z; break;
-	 case 3: *r = (int) x; *g = (int) y; *b = (int) v; break;
-	 case 4: *r = (int) z; *g = (int) x; *b = (int) v; break;
-	 case 5: *r = (int) v; *g = (int) x; *b = (int) y; break;
-      }
-   }
+		switch (i) {
+			case 0: *r = (int)v; *g = (int)z; *b = (int)x; break;
+			case 1: *r = (int)y; *g = (int)v; *b = (int)x; break;
+			case 2: *r = (int)x; *g = (int)v; *b = (int)z; break;
+			case 3: *r = (int)x; *g = (int)y; *b = (int)v; break;
+			case 4: *r = (int)z; *g = (int)x; *b = (int)v; break;
+			case 5: *r = (int)v; *g = (int)x; *b = (int)y; break;
+		}
+	}
 }
 
 // Adds a new node to the list of MIDI text events
-midi_text_t *new_midi_text(char *midi_text, int text_type, double midi_time, int track, int track_offset)
+midi_text_t* new_midi_text(char* midi_text, int text_type, double midi_time, int track, int track_offset)
 {
-	midi_text_t *p, *n;
-	char *ch;
+	midi_text_t* p, * n;
+	char* ch;
 
 	// Allocate memory for the new node
-	n = (midi_text_t *) calloc(1, sizeof(midi_text_t));
+	n = (midi_text_t*)calloc(1, sizeof(midi_text_t));
 
 	// If the list is empty.. add this as the top node
 	if (!midi_text_events)
@@ -2980,7 +2981,7 @@ midi_text_t *new_midi_text(char *midi_text, int text_type, double midi_time, int
 // Removes all nodes in the list of MIDI text events
 void kill_all_midi_text(void)
 {
-	midi_text_t *p = midi_text_events, *next;
+	midi_text_t* p = midi_text_events, * next;
 
 	while (p)
 	{
@@ -2994,12 +2995,12 @@ void kill_all_midi_text(void)
 }
 
 // Adds a new node to the list of MIDI sysex events
-midi_sysex_t *new_midi_sysex(unsigned char *data, int length, double midi_time, int track, int track_offset, int channel)
+midi_sysex_t* new_midi_sysex(unsigned char* data, int length, double midi_time, int track, int track_offset, int channel)
 {
-	midi_sysex_t *p, *n;
+	midi_sysex_t* p, * n;
 
 	// Allocate memory for the new node
-	n = (midi_sysex_t *) calloc(1, sizeof(midi_sysex_t));
+	n = (midi_sysex_t*)calloc(1, sizeof(midi_sysex_t));
 
 	// If the list is empty.. add this as the top node
 	if (!midi_sysex_events)
@@ -3030,7 +3031,7 @@ midi_sysex_t *new_midi_sysex(unsigned char *data, int length, double midi_time, 
 // Removes all nodes in the list of MIDI sysex events
 void kill_all_midi_sysex(void)
 {
-	midi_sysex_t *p = midi_sysex_events, *next;
+	midi_sysex_t* p = midi_sysex_events, * next;
 
 	while (p)
 	{
@@ -3046,11 +3047,11 @@ INT_PTR CALLBACK TextDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	char buf[2048];
 	HWND hwndLB;
-	midi_text_t *p;
+	midi_text_t* p;
 	int num_text_events;
 	int i, textlen;
-	char *txtbuf;
-	midi_text_t *t;
+	char* txtbuf;
+	midi_text_t* t;
 
 	switch (iMsg)
 	{
@@ -3063,11 +3064,11 @@ INT_PTR CALLBACK TextDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(hwndLB, LB_RESETCONTENT, 0, 0);
 			for (p = midi_text_events; p; p = p->next)
 			{
-				sprintf(buf, "[%d:%02d] %s: %s", 
-					(int) p->midi_time / 60, (int) p->midi_time % 60,
+				sprintf(buf, "[%d:%02d] %s: %s",
+					(int)p->midi_time / 60, (int)p->midi_time % 60,
 					midi_text_event_descriptions[p->text_type], p->midi_text);
-				i = SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM) buf);
-				SendMessage(hwndLB, LB_SETITEMDATA, i, (LPARAM) p);
+				i = SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM)buf);
+				SendMessage(hwndLB, LB_SETITEMDATA, i, (LPARAM)p);
 				num_text_events++;
 			}
 			//SendMessage(hwndLB, LB_SETTOPINDEX, (WPARAM) num_text_events - 1, 0);
@@ -3083,11 +3084,11 @@ INT_PTR CALLBACK TextDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			if (HIWORD(wParam) == LBN_DBLCLK)
 			{
 				// List box was double-clicked
-				i = SendMessage((HWND) lParam, LB_GETCURSEL, 0, 0);
+				i = SendMessage((HWND)lParam, LB_GETCURSEL, 0, 0);
 				if (i != LB_ERR)
 				{
-					t = (midi_text_t *) SendMessage((HWND) lParam, LB_GETITEMDATA, i, 0);
-					if ((int) t != LB_ERR)
+					t = (midi_text_t*)SendMessage((HWND)lParam, LB_GETITEMDATA, i, 0);
+					if ((int)t != LB_ERR)
 					{
 						copy_to_clipboard(t->midi_text);
 					}
@@ -3109,7 +3110,7 @@ INT_PTR CALLBACK TextDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_SIZE:
-			MoveWindow(GetDlgItem(hDlg, IDC_TEXT_LIST), 0, 0, 
+			MoveWindow(GetDlgItem(hDlg, IDC_TEXT_LIST), 0, 0,
 				LOWORD(lParam), HIWORD(lParam), TRUE);
 			break;
 
@@ -3138,7 +3139,7 @@ INT_PTR CALLBACK GenericTextDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPar
 		}
 		case WM_SIZE:
 		{
-			MoveWindow(GetDlgItem(hDlg, IDC_GENERIC_TEXT), 0, 0, 
+			MoveWindow(GetDlgItem(hDlg, IDC_GENERIC_TEXT), 0, 0,
 				LOWORD(lParam), HIWORD(lParam), TRUE);
 			break;
 		}
@@ -3172,7 +3173,7 @@ void set_tempo(int new_tempo)
 
 	// Calculate new tick length
 	old_tick_length = ms.tick_length;
-	ms.tick_length = ((double) (new_tempo / 1000) / (double) mh.num_ticks);
+	ms.tick_length = ((double)(new_tempo / 1000) / (double)mh.num_ticks);
 
 	if (new_tempo == last_tempo)
 		return;
@@ -3184,7 +3185,7 @@ void set_tempo(int new_tempo)
 		// Update tick length display on the main dialog
 		sprintf(buf, "%.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / new_tempo);
 		SetDlgItemText(hwndApp, IDC_TEMPO, buf);
-		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, TRUE, (int) (60000000.0f / new_tempo));
+		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, TRUE, (int)(60000000.0f / new_tempo));
 	}
 
 	// Output some debug info summarizing this tempo change
@@ -3218,16 +3219,16 @@ void check_associations(void)
 		return;
 
 	// See if .mid files are registered to TMIDI
-	RegCreateKeyEx(HKEY_CLASSES_ROOT, ".mid", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
+	RegCreateKeyEx(HKEY_CLASSES_ROOT, ".mid", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
 	if (key)
 	{
 		i = sizeof(buf);
-		RegQueryValueEx(key, "", 0, NULL, (BYTE *) &buf, (unsigned long *) &i);
+		RegQueryValueEx(key, "", 0, NULL, (BYTE*)&buf, (unsigned long*)&i);
 		RegCloseKey(key);
 		if (strcmp(buf, "TMIDI"))
 		{
-			i = DialogBoxParam(ghInstance, MAKEINTRESOURCE(IDD_ASSOC), NULL, AssocDlg, (long) &goAway);
+			i = DialogBoxParam(ghInstance, MAKEINTRESOURCE(IDD_ASSOC), NULL, AssocDlg, (long)&goAway);
 			if (goAway)
 				alwaysCheckAssociations = FALSE;
 			if (i)
@@ -3250,50 +3251,50 @@ void set_associations(void)
 
 	// Set up registry entries to associate TMIDI with MIDI files
 	// Registry entry for .mid
-	RegCreateKeyEx(HKEY_CLASSES_ROOT, ".mid", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
+	RegCreateKeyEx(HKEY_CLASSES_ROOT, ".mid", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
 	strcpy(buf, "TMIDI");
-	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
+	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
 	RegCloseKey(key);
 	// Registry key for TMIDI
-	RegCreateKeyEx(HKEY_CLASSES_ROOT, "TMIDI", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &tmkey, (unsigned long *) &disposition);
+	RegCreateKeyEx(HKEY_CLASSES_ROOT, "TMIDI", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &tmkey, (unsigned long*)&disposition);
 	strcpy(buf, "TMIDI File");
-	RegSetValueEx(tmkey, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
+	RegSetValueEx(tmkey, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
 	// Registry key for TMIDI\DefaultIcon
-	RegCreateKeyEx(tmkey, "DefaultIcon", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
+	RegCreateKeyEx(tmkey, "DefaultIcon", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
 	strcpy(buf, modulePath);
 	strcat(buf, ",0");
-	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
+	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
 	RegCloseKey(key);
 	// Registry key for TMIDI\Shell
-	RegCreateKeyEx(tmkey, "Shell", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &shkey, (unsigned long *) &disposition);
+	RegCreateKeyEx(tmkey, "Shell", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &shkey, (unsigned long*)&disposition);
 	strcpy(buf, "Play");
-	RegSetValueEx(shkey, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
+	RegSetValueEx(shkey, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
 	// Registry key for TMIDI\Shell\open
-	RegCreateKeyEx(shkey, "open", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &subkey, (unsigned long *) &disposition);
-	RegCreateKeyEx(subkey, "command", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
+	RegCreateKeyEx(shkey, "open", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &subkey, (unsigned long*)&disposition);
+	RegCreateKeyEx(subkey, "command", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
 	strcpy(buf, "\"");
 	strcat(buf, modulePath);
 	strcat(buf, "\" \"%1\"");
-	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
+	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
 	RegCloseKey(key);
 	RegCloseKey(subkey);
 	// Registry key for TMIDI\Shell\Play
-	RegCreateKeyEx(shkey, "Play", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &subkey, (unsigned long *) &disposition);
+	RegCreateKeyEx(shkey, "Play", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &subkey, (unsigned long*)&disposition);
 	strcpy(buf, "&Play in TMIDI");
-	RegSetValueEx(subkey, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
-	RegCreateKeyEx(subkey, "command", 0, "", 
-		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long *) &disposition);
+	RegSetValueEx(subkey, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
+	RegCreateKeyEx(subkey, "command", 0, "",
+		REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, (unsigned long*)&disposition);
 	strcpy(buf, "\"");
 	strcat(buf, modulePath);
 	strcat(buf, "\" \"%1\"");
-	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE *) buf, strlen(buf) + 1);
+	RegSetValueEx(key, "", 0, REG_SZ, (CONST BYTE*) buf, strlen(buf) + 1);
 	RegCloseKey(key);
 	RegCloseKey(subkey);
 	RegCloseKey(shkey);
@@ -3303,13 +3304,13 @@ void set_associations(void)
 // Dialog for file type association question
 INT_PTR CALLBACK AssocDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	static int *goAway = NULL;
+	static int* goAway = NULL;
 
 	switch (iMsg)
 	{
 		case WM_INITDIALOG:
 		{
-			goAway = (int *) lParam;
+			goAway = (int*)lParam;
 			return TRUE;
 		}
 		case WM_COMMAND:
@@ -3335,11 +3336,11 @@ INT_PTR CALLBACK AssocDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 }
 
-playlist_t *playlist_add(char *filename)
+playlist_t* playlist_add(char* filename)
 {
-	playlist_t *n, *p;
+	playlist_t* n, * p;
 
-	n = (playlist_t *) malloc(sizeof(playlist_t));
+	n = (playlist_t*)malloc(sizeof(playlist_t));
 	strcpy(n->filename, filename);
 	n->prev = n->next = NULL;
 	if (!playlist)
@@ -3356,7 +3357,7 @@ playlist_t *playlist_add(char *filename)
 
 void playlist_clear(void)
 {
-	playlist_t *p;
+	playlist_t* p;
 
 	while (playlist)
 	{
@@ -3366,7 +3367,7 @@ void playlist_clear(void)
 	}
 }
 
-playlist_t *playlist_remove(playlist_t *target)
+playlist_t* playlist_remove(playlist_t* target)
 {
 	return NULL;
 }
@@ -3374,12 +3375,12 @@ playlist_t *playlist_remove(playlist_t *target)
 // Gets a value from a scroll bar, to handle an HSCROLL or VSCROLL message
 // The value is stored in i.
 // The function returns 0 on success, 1 if no value was obtained.
-int get_scroll_value(WPARAM wParam, LPARAM lParam, int *i)
+int get_scroll_value(WPARAM wParam, LPARAM lParam, int* i)
 {
 	switch (LOWORD(wParam))
 	{
 		case TB_ENDTRACK:
-			*i = SendMessage((HWND) lParam, TBM_GETPOS, 0, 0);
+			*i = SendMessage((HWND)lParam, TBM_GETPOS, 0, 0);
 			return 0;
 		case TB_THUMBPOSITION:
 		case TB_THUMBTRACK:
@@ -3416,7 +3417,7 @@ void set_channel_mute(int channel, int mute)
 	unsigned char vel, note, was_muted;
 	HWND hwnd = GetDlgItem(hwndApp, IDC_C0 + channel);
 
-//	style = GetWindowLong(hwnd, GWL_STYLE);
+	//	style = GetWindowLong(hwnd, GWL_STYLE);
 
 	was_muted = ms.channels[channel].muted;
 	ms.channels[channel].muted = mute;
@@ -3425,7 +3426,7 @@ void set_channel_mute(int channel, int mute)
 	{
 		// Mute the channel
 		all_notes_off_channel(channel);
-//		style |= SS_SUNKEN;
+		//		style |= SS_SUNKEN;
 	}
 	else
 	{
@@ -3443,7 +3444,7 @@ void set_channel_mute(int channel, int mute)
 //		style &= ~SS_SUNKEN;
 	}
 
-	SendMessage(hwnd, BM_SETCHECK, (WPARAM) mute, 0);
+	SendMessage(hwnd, BM_SETCHECK, (WPARAM)mute, 0);
 	//SetWindowLong(hwnd, GWL_STYLE, style);
 	//SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOSIZE | SWP_DRAWFRAME);
 	//InvalidateRect(hwnd, NULL, TRUE);
@@ -3470,7 +3471,7 @@ void set_channel_solo(int channel)
 LRESULT CALLBACK NewButtonProc(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (iMsg == WM_RBUTTONUP)
-		PostMessage(GetParent(hDlg), WM_COMMAND, MAKELONG(GetDlgCtrlID(hDlg), WM_RBUTTONUP), (LPARAM) hDlg);
+		PostMessage(GetParent(hDlg), WM_COMMAND, MAKELONG(GetDlgCtrlID(hDlg), WM_RBUTTONUP), (LPARAM)hDlg);
 
 	return CallWindowProc(OldButtonProc, hDlg, iMsg, wParam, lParam);
 }
@@ -3517,21 +3518,21 @@ INT_PTR CALLBACK TracksDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 void InitTracksListView(HWND hwndLV)
 {
 	LV_COLUMN lvc;
-	char *columns[NUM_TRACK_COLUMNS] = { 
-		"Track", 
-		"Bytes", 
-		"Event", 
-		"Events", 
-		"Channel", 
-		"Name", 
-		"Program", 
-		"Bank", 
-		"Note", 
-		"Last Controller", 
-		"Value", 
+	char* columns[NUM_TRACK_COLUMNS] = {
+		"Track",
+		"Bytes",
+		"Event",
+		"Events",
+		"Channel",
+		"Name",
+		"Program",
+		"Bank",
+		"Note",
+		"Last Controller",
+		"Value",
 		"Pitch Bend"
 	};
-	int column_width[NUM_TRACK_COLUMNS] = { 
+	int column_width[NUM_TRACK_COLUMNS] = {
 		40,			// Track
 		45,			// Bytes
 		45,			// Event
@@ -3583,16 +3584,16 @@ void SetupItemsTracksListView(HWND hwndLV)
 	// Clear the cache flag used in FillTracksListView()
 	tracksLastValuesSet = 0;
 
-    // Initialize LV_ITEM members that are common to all items.
+	// Initialize LV_ITEM members that are common to all items.
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE;
 	lvi.state = 0;
-	lvi.stateMask = 0; 
-	lvi.iImage = 0;                     // image list index
+	lvi.stateMask = 0;
+	lvi.iImage = 0;					 // image list index
 	lvi.lParam = 0;						// item data
 
 	for (iItem = 0; iItem < mh.num_tracks; iItem++)
 	{
-        // Initialize item-specific LV_ITEM members.
+		// Initialize item-specific LV_ITEM members.
 		lvi.iItem = iItem;
 
 		// Item, message ID #
@@ -3603,7 +3604,7 @@ void SetupItemsTracksListView(HWND hwndLV)
 }
 
 // Sets an integer in the tracks list view control, IF its contents have changed
-void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int &lastval, int val)
+void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int& lastval, int val)
 {
 	char buf[64];
 
@@ -3616,10 +3617,10 @@ void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int &lastval, in
 }
 
 // Sets a string in the tracks list view control, IF its contents have changed
-void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int &lastval, char *str)
+void SetCachedLVItem(HWND hwndLV, int iItem, int column, signed int& lastval, char* str)
 {
 	signed int h;
-	char *ch = str;
+	char* ch = str;
 
 	// Do a simple hash of the string to form the lastval
 	h = 0;
@@ -3649,7 +3650,7 @@ void FillTracksListView(HWND hwndLV)
 	for (iItem = 0; iItem < mh.num_tracks; iItem++)
 	{
 		// 0: Track number
-		SetCachedLVItem(hwndLV, iItem, 0, last_value[0][iItem], (int) (th[iItem].tracknum + 1));
+		SetCachedLVItem(hwndLV, iItem, 0, last_value[0][iItem], (int)(th[iItem].tracknum + 1));
 		// 1: Track length (in bytes)
 		SetCachedLVItem(hwndLV, iItem, 1, last_value[1][iItem], th[iItem].length);
 		// 2: Number of events done
@@ -3733,16 +3734,16 @@ INT_PTR CALLBACK ChannelsDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 void InitChannelsListView(HWND hwndLV)
 {
 	LV_COLUMN lvc;
-	char *columns[NUM_CHANNEL_COLUMNS] = { 
-		"Channel", 
-		"Program", 
-		"Bank", 
-		"Note", 
-		"Last Controller", 
-		"Value", 
+	char* columns[NUM_CHANNEL_COLUMNS] = {
+		"Channel",
+		"Program",
+		"Bank",
+		"Note",
+		"Last Controller",
+		"Value",
 		"Pitch Bend"
 	};
-	int column_width[NUM_CHANNEL_COLUMNS] = { 
+	int column_width[NUM_CHANNEL_COLUMNS] = {
 		52,			// Channel
 		120,		// Program
 		37,			// Bank
@@ -3790,16 +3791,16 @@ void SetupItemsChannelsListView(HWND hwndLV)
 	// Clear the cache flag used in FillChannelsListView()
 	channelsLastValuesSet = 0;
 
-    // Initialize LV_ITEM members that are common to all items.
+	// Initialize LV_ITEM members that are common to all items.
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE;
 	lvi.state = 0;
-	lvi.stateMask = 0; 
-	lvi.iImage = 0;                     // image list index
+	lvi.stateMask = 0;
+	lvi.iImage = 0;					 // image list index
 	lvi.lParam = 0;						// item data
 
 	for (iItem = 0; iItem < 16; iItem++)
 	{
-        // Initialize item-specific LV_ITEM members.
+		// Initialize item-specific LV_ITEM members.
 		lvi.iItem = iItem;
 
 		// Item, message ID #
@@ -3862,12 +3863,12 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	LPNMHDR nmhdr;
 	LVITEM lvi;
 	HANDLE hClipdata;
-	char *clipdata;
+	char* clipdata;
 	int i;
 	unsigned char ch, hi, lo;
-	midi_sysex_t *s;
+	midi_sysex_t* s;
 	HWND gendlg;
-	unsigned char *genbuf, *genptr;
+	unsigned char* genbuf, * genptr;
 
 	switch (iMsg)
 	{
@@ -3903,7 +3904,7 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_NOTIFY:
-			nmhdr = (LPNMHDR) lParam;
+			nmhdr = (LPNMHDR)lParam;
 			switch (nmhdr->idFrom)
 			{
 				case IDC_SYSEX_LIST:
@@ -3920,11 +3921,11 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 							lvi.mask = LVIF_PARAM;
 							if (!ListView_GetItem(hwndLV, &lvi))
 								break;
-							s = (midi_sysex_t *) lvi.lParam;
+							s = (midi_sysex_t*)lvi.lParam;
 							// Open a generic text window
-							gendlg = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_GENERIC_TEXT), hDlg, (DLGPROC) GenericTextDlg);
+							gendlg = CreateDialog(ghInstance, MAKEINTRESOURCE(IDD_GENERIC_TEXT), hDlg, (DLGPROC)GenericTextDlg);
 							// Allocate a temp buffer to hold the sysex data in text format
-							genptr = genbuf = (unsigned char *) malloc(s->length * 4);
+							genptr = genbuf = (unsigned char*)malloc(s->length * 4);
 							// Fill the buffer
 							i = 0;
 							while (i < s->length)
@@ -3948,7 +3949,7 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 							}
 							*genptr = '\0';
 							// Put this text into the generic text window
-							SetDlgItemText(gendlg, IDC_GENERIC_TEXT, (char *) genbuf);
+							SetDlgItemText(gendlg, IDC_GENERIC_TEXT, (char*)genbuf);
 							// Free the temp buffer
 							free(genbuf);
 							break;
@@ -3963,11 +3964,11 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 							lvi.mask = LVIF_PARAM;
 							if (!ListView_GetItem(hwndLV, &lvi))
 								break;
-							s = (midi_sysex_t *) lvi.lParam;
+							s = (midi_sysex_t*)lvi.lParam;
 							// Allocate enough memory to store the sysex data in text format
 							hClipdata = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, s->length * 3 + 3);
 							// Lock the memory
-							clipdata = (char *) GlobalLock(hClipdata);
+							clipdata = (char*)GlobalLock(hClipdata);
 							if (clipdata)
 							{
 								// Fill it with the sysex data in text format
@@ -3979,7 +3980,7 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 									ch = s->data[i];
 									hi = HINYBBLE(ch);
 									lo = LONYBBLE(ch);
-									clipdata[3 + i * 3]     = (hi > 9) ? (hi - 10 + 'A') : (hi + '0');
+									clipdata[3 + i * 3] = (hi > 9) ? (hi - 10 + 'A') : (hi + '0');
 									clipdata[3 + i * 3 + 1] = (lo > 9) ? (lo - 10 + 'A') : (lo + '0');
 									clipdata[3 + i * 3 + 2] = ' ';
 								}
@@ -4008,20 +4009,20 @@ INT_PTR CALLBACK SysexDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 void InitSysexListView(HWND hwndLV)
 {
 	LV_COLUMN lvc;
-	char *columns[NUM_TRACK_COLUMNS] = { 
-		"Time", 
-		"Track", 
-		"Offset", 
-		"Ch.", 
-		"Length", 
-		"Data", 
-		"Manufacturer", 
-		"Device", 
-		"Model", 
-		"Cmd", 
+	char* columns[NUM_TRACK_COLUMNS] = {
+		"Time",
+		"Track",
+		"Offset",
+		"Ch.",
+		"Length",
+		"Data",
+		"Manufacturer",
+		"Device",
+		"Model",
+		"Cmd",
 		"Interpretation"
 	};
-	int column_width[NUM_TRACK_COLUMNS] = { 
+	int column_width[NUM_TRACK_COLUMNS] = {
 		40,			// Time
 		40,			// Track
 		48,			// Track Offset
@@ -4065,36 +4066,36 @@ void SetupItemsSysexListView(HWND hwndLV)
 {
 	LVITEM lvi;
 	int iItem;
-	midi_sysex_t *p;
+	midi_sysex_t* p;
 	char buf[2048];
 	unsigned char ch, hi, lo;
 	int i, j;
-	unsigned char *s;
+	unsigned char* s;
 
 	// Reset the list view by deleting everything in it
 	ListView_DeleteAllItems(hwndLV);
 
-    // Initialize LV_ITEM members that are common to all items.
+	// Initialize LV_ITEM members that are common to all items.
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM | LVIF_STATE;
 	lvi.state = 0;
-	lvi.stateMask = 0; 
-	lvi.iImage = 0;                     // image list index
+	lvi.stateMask = 0;
+	lvi.iImage = 0;					 // image list index
 	lvi.lParam = 0;						// item data
 
 	iItem = 0;
 	for (p = midi_sysex_events; p; p = p->next)
 	{
-        // Initialize item-specific LV_ITEM members.
+		// Initialize item-specific LV_ITEM members.
 		lvi.iItem = iItem;
 
 		// Item, message ID #
 		lvi.iSubItem = 0;
-		lvi.lParam = (LPARAM) p;
+		lvi.lParam = (LPARAM)p;
 		lvi.pszText = "";
 		ListView_InsertItem(hwndLV, &lvi);
 
 		// Set the various items for this sysex event
-		sprintf(buf, "%d:%02d", ((int) p->midi_time) / 60, ((int) p->midi_time) % 60);
+		sprintf(buf, "%d:%02d", ((int)p->midi_time) / 60, ((int)p->midi_time) % 60);
 		ListView_SetItemText(hwndLV, iItem, 0, buf);
 		itoa(p->track, buf, 10);
 		ListView_SetItemText(hwndLV, iItem, 1, buf);
@@ -4116,7 +4117,7 @@ void SetupItemsSysexListView(HWND hwndLV)
 			ch = p->data[i];
 			hi = HINYBBLE(ch);
 			lo = LONYBBLE(ch);
-			buf[3 + i * 3]     = (hi > 9) ? (hi - 10 + 'A') : (hi + '0');
+			buf[3 + i * 3] = (hi > 9) ? (hi - 10 + 'A') : (hi + '0');
 			buf[3 + i * 3 + 1] = (lo > 9) ? (lo - 10 + 'A') : (lo + '0');
 			buf[3 + i * 3 + 2] = ' ';
 		}
@@ -4129,7 +4130,7 @@ void SetupItemsSysexListView(HWND hwndLV)
 		if (s[1] == 127)
 			strcpy(buf, "(All)");
 		else
-			sprintf(buf, "0x%02X", (unsigned int) s[1]);
+			sprintf(buf, "0x%02X", (unsigned int)s[1]);
 		ListView_SetItemText(hwndLV, iItem, 7, buf);
 		// 8: Model
 		strcpy(buf, interpret_model(s));
@@ -4145,10 +4146,10 @@ void SetupItemsSysexListView(HWND hwndLV)
 	}
 }
 
-void output_sysex_data(unsigned char channel, unsigned char *data, int length)
+void output_sysex_data(unsigned char channel, unsigned char* data, int length)
 {
 	MIDIHDR mh;
-	static unsigned char *buf = (unsigned char *) malloc(256);
+	static unsigned char* buf = (unsigned char*)malloc(256);
 	int buflen = 256;
 
 	if (!hout)
@@ -4158,15 +4159,15 @@ void output_sysex_data(unsigned char channel, unsigned char *data, int length)
 	if (length + 2 > buflen)
 	{
 		buflen = length + 32;
-		buf = (unsigned char *) realloc(buf, buflen);
+		buf = (unsigned char*)realloc(buf, buflen);
 	}
 
 	buf[0] = 0xF0;					// Sysex begin command
 	memcpy(buf + 1, data, length);	// Copy the sysex data into the local sysex buffer
-	
+
 	// Prepare the MIDI out header
 	memset(&mh, 0, sizeof(mh));
-	mh.lpData = (char *) buf;
+	mh.lpData = (char*)buf;
 	mh.dwBufferLength = length + 1;
 	mh.dwBytesRecorded = length + 1;
 	// Prepare the sysex buffer for output
@@ -4180,7 +4181,7 @@ void output_sysex_data(unsigned char channel, unsigned char *data, int length)
 }
 
 // Interprets a sysex string
-char *interpret_sysex(unsigned char *s, int len)
+char* interpret_sysex(unsigned char* s, int len)
 {
 	static char buf[256], timbreName[16];
 	int i, j;
@@ -4208,7 +4209,7 @@ char *interpret_sysex(unsigned char *s, int len)
 						case 0x08:	// Timbre Memory
 							strcpy(buf, "Timbre Memory: ");
 							interpret_mt32_timbre_memory(s, len);
-							strncat(buf, (char *) &s[7], 10);
+							strncat(buf, (char*)&s[7], 10);
 							break;
 						case 0x10:	// System Area
 							strcpy(buf, "System Area");
@@ -4392,230 +4393,230 @@ char *interpret_sysex(unsigned char *s, int len)
 								}
 							}
 							else
-							if (s[5] >= 0x20 && s[5] <= 0x2F)
-							{
-								strcpy(buf, "VCF/VCO/VCA Parameter");
-							}
-							else
-							if (s[5] >= 0x40 && s[5] <= 0x4F)
-							{
-								sprintf(buf, "SC-88 Part %d: ", interpret_sysex_part(s[5]));
-SC88PartParam:
-								switch (s[6])
+								if (s[5] >= 0x20 && s[5] <= 0x2F)
 								{
-									case 0x13:
-										sprintf(&buf[strlen(buf)], "Mono/Poly mode: %s", s[7] ? "Polyphonic" : "Mono");
-										break;
-									case 0x20:
-										sprintf(&buf[strlen(buf)], "EQ: %s", s[7] ? "On" : "Off");
-										break;
-									case 0x21:
-										strcat(buf, "Output Assign: ");
-										switch (s[7])
-										{
-											case 0x00: strcat(buf, "Output 1"); break;
-											case 0x01: strcat(buf, "Output 2"); break;
-											case 0x02: strcat(buf, "Output 2-L"); break;
-											case 0x03: strcat(buf, "Output 2-R"); break;
-											default: strcat(buf, itoa(s[7], buf, 10));
-										}
-										break;
-									case 0x22:
-										sprintf(&buf[strlen(buf)], "EFX: %s", s[7] ? "On" : "Off");
-										break;
-									case 0x2A:
-										sprintf(&buf[strlen(buf)], "SC-88 Pitch Tune Fine: %d", s[7]);
-										break;
+									strcpy(buf, "VCF/VCO/VCA Parameter");
 								}
-							}
-							else
-							switch (s[5])
-							{
-								case 0x00:	// System parameter
-									switch (s[6])
+								else
+									if (s[5] >= 0x40 && s[5] <= 0x4F)
 									{
-										case 0x00:	// Master Tune
-										case 0x02:
-										case 0x03:
-											strcpy(buf, "Master Tune");
-											break;
-										case 0x04:	// Master Volume
-											strcpy(buf, "Master Volume");
-											break;
-										case 0x05:	// Master Key Shift
-											strcpy(buf, "Master Key Shift");
-											break;
-										case 0x06:	// Master Pan
-											strcpy(buf, "Master Pan");
-											break;
-										case 0x7F:	// GS Reset
-											strcpy(buf, "GS Reset");	// F0 41 10 42 12 40 00 7F 00 41 F7
-											break;
+										sprintf(buf, "SC-88 Part %d: ", interpret_sysex_part(s[5]));
+									SC88PartParam:
+										switch (s[6])
+										{
+											case 0x13:
+												sprintf(&buf[strlen(buf)], "Mono/Poly mode: %s", s[7] ? "Polyphonic" : "Mono");
+												break;
+											case 0x20:
+												sprintf(&buf[strlen(buf)], "EQ: %s", s[7] ? "On" : "Off");
+												break;
+											case 0x21:
+												strcat(buf, "Output Assign: ");
+												switch (s[7])
+												{
+													case 0x00: strcat(buf, "Output 1"); break;
+													case 0x01: strcat(buf, "Output 2"); break;
+													case 0x02: strcat(buf, "Output 2-L"); break;
+													case 0x03: strcat(buf, "Output 2-R"); break;
+													default: strcat(buf, itoa(s[7], buf, 10));
+												}
+												break;
+											case 0x22:
+												sprintf(&buf[strlen(buf)], "EFX: %s", s[7] ? "On" : "Off");
+												break;
+											case 0x2A:
+												sprintf(&buf[strlen(buf)], "SC-88 Pitch Tune Fine: %d", s[7]);
+												break;
+										}
 									}
-									break;
-								case 0x01:	// Patch parameter
-									switch (s[6])
-									{
-										case 0x00:	// Patch Name
-											strcpy(buf, "Patch Name: ");
-											j = strlen(buf);
-											for (i = 8; i < len - 2; i++)
-												buf[j++] = s[i];
-											buf[j] = '\0';							
-											break;
-										case 0x10:	// Voice Reserve
-											strcpy(buf, "Voice Reserve");
-											break;
-										case 0x30:	// Reverb Macro
-											strcpy(buf, "Reverb Macro: ");
-											switch (s[7])
-											{
-												case 0x00: strcat(buf, "Room 1"); break;
-												case 0x01: strcat(buf, "Room 2"); break;
-												case 0x02: strcat(buf, "Room 3"); break;
-												case 0x03: strcat(buf, "Hall 1"); break;
-												case 0x04: strcat(buf, "Hall 2"); break;
-												case 0x05: strcat(buf, "Plate"); break;
-												case 0x06: strcat(buf, "Delay"); break;
-												case 0x07: strcat(buf, "Panning Delay"); break;
-											}
-											break;
-										case 0x31:	// Reverb Character
-											sprintf(buf, "Reverb Character: %d", s[7]);
-											break;
-										case 0x32:	// Reverb PRE-LPF
-											sprintf(buf, "Reverb PRE-LPF: %d", s[7]);
-											break;
-										case 0x33:	// Reverb Level
-											sprintf(buf, "Reverb Level: %d", s[7]);
-											break;
-										case 0x34:	// Reverb Time
-											sprintf(buf, "Reverb Time: %d", s[7]);
-											break;
-										case 0x35:	// Reverb Delay Feedback
-											sprintf(buf, "Reverb Delay Feedback: %d", s[7]);
-											break;
-										case 0x36:	// Reverb Send to Chorus
-											sprintf(buf, "Reverb Send to Chorus: %d", s[7]);
-											break;
-										case 0x37:	// SC-88 Reverb Pre-Delay Time
-											sprintf(buf, "SC-88 Reverb Pre-Delay Time: %d", s[7]);
-											break;
-										case 0x38:	// Chorus Macro
-											strcpy(buf, "Chorus Macro: ");
-											switch (s[7])
-											{
-												case 0x00: strcat(buf, "Chorus 1"); break;
-												case 0x01: strcat(buf, "Chorus 2"); break;
-												case 0x02: strcat(buf, "Chorus 3"); break;
-												case 0x03: strcat(buf, "Chorus 4"); break;
-												case 0x04: strcat(buf, "Feedback Chorus"); break;
-												case 0x05: strcat(buf, "Flanger"); break;
-												case 0x06: strcat(buf, "Short Delay"); break;
-												case 0x07: strcat(buf, "Short Delay - Feedback"); break;
-											}
-											break;
-										case 0x39:	// Chorus PRE-LPF
-											sprintf(buf, "Chorus PRE-LPF: %d", s[7]);
-											break;
-										case 0x3A:	// Chorus Level
-											sprintf(buf, "Chorus Level: %d", s[7]);
-											break;
-										case 0x3B:	// Chorus Feedback
-											sprintf(buf, "Chorus Feedback: %d", s[7]);
-											break;
-										case 0x3C:	// Chorus Delay
-											sprintf(buf, "Chorus Delay: %d", s[7]);
-											break;
-										case 0x3D:	// Chorus Rate
-											sprintf(buf, "Chorus Rate: %d", s[7]);
-											break;
-										case 0x3E:	// Chorus Depth
-											sprintf(buf, "Chorus Depth: %d", s[7]);
-											break;
-										case 0x3F:	// Chorus Send to Reverb
-											sprintf(buf, "Chorus Send to Reverb: %d", s[7]);
-											break;
-										case 0x40:	// Chorus Send to Delay
-											sprintf(buf, "Chorus Send to Delay: %d", s[7]);
-											break;
-										case 0x50:	// SC-88 Delay Macro
-											strcpy(buf, "SC-88 Delay Macro: ");
-											switch (s[7])
-											{
-												case 0x00: strcat(buf, "Delay 1"); break;
-												case 0x01: strcat(buf, "Delay 2"); break;
-												case 0x02: strcat(buf, "Delay 3"); break;
-												case 0x03: strcat(buf, "Delay 4"); break;
-												case 0x04: strcat(buf, "Pan Delay 1"); break;
-												case 0x05: strcat(buf, "Pan Delay 2"); break;
-												case 0x06: strcat(buf, "Pan Delay 3"); break;
-												case 0x07: strcat(buf, "Pan Delay 4"); break;
-												case 0x08: strcat(buf, "Delay to Reverb"); break;
-												case 0x09: strcat(buf, "Pan Repeat"); break;
-											}
-											break;
-										case 0x51:	// SC-88 Delay PRE-LPF
-											sprintf(buf, "SC-88 Delay PRE-LPF: %d", s[7]);
-											break;
-										case 0x52:	// SC-88 Delay Time Center
-											sprintf(buf, "SC-88 Delay Time Center: %d", s[7]);
-											break;
-										case 0x53:	// SC-88 Delay Time Ratio Left
-											sprintf(buf, "SC-88 Delay Time Ratio Left: %d", s[7]);
-											break;
-										case 0x54:	// SC-88 Delay Time Ratio Right
-											sprintf(buf, "SC-88 Delay Time Ratio Right: %d", s[7]);
-											break;
-										case 0x55:	// SC-88 Delay Level Center
-											sprintf(buf, "SC-88 Delay Level Center: %d", s[7]);
-											break;
-										case 0x56:	// SC-88 Delay Level Left
-											sprintf(buf, "SC-88 Delay Level Left: %d", s[7]);
-											break;
-										case 0x57:	// SC-88 Delay Level Right
-											sprintf(buf, "SC-88 Delay Level Right: %d", s[7]);
-											break;
-										case 0x58:	// SC-88 Delay Level
-											sprintf(buf, "SC-88 Delay Level: %d", s[7]);
-											break;
-										case 0x59:	// SC-88 Delay Feedback
-											sprintf(buf, "SC-88 Delay Feedback: %s%d", s[7] > 0x40 ? "+" : "", s[7] - 0x40);
-											break;
-										case 0x5A:	// SC-88 Send Level to Reverb
-											sprintf(buf, "SC-88 Send Level to Reverb: %d", s[7]);
-											break;
-									}
-									break;
-								case 0x02:	// SC-88 Equalization Parameter
-									switch (s[6])
-									{
-										case 0x00:
-											sprintf(buf, "SC-88 Low Freq. EQ: %d Hz", s[7] ? 200 : 100);
-											break;
-										case 0x01:
-											sprintf(buf, "SC-88 Low Freq. Gain: %s%d db", s[7] >= 0x40 ? "+" : "", s[7] - 0x40);
-											break;
-										case 0x02:
-											sprintf(buf, "SC-88 High Freq. EQ: %d kHz", s[7] ? 8 : 4);
-											break;
-										case 0x03:
-											sprintf(buf, "SC-88 High Freq. Gain: %s%d db", s[7] >= 0x40 ? "+" : "", s[7] - 0x40);
-											break;
-									}
-									break;
-								case 0x03:	// SC-88 Pro EFX Parameter
-									switch (s[6])
-									{
-										case 0x00:
-											sprintf(buf, "SC-88 Pro EFX Type %d/%d", s[7], s[8]);
-											break;
-										default:
-											sprintf(buf, "SC-88 Pro EFX Parameter %d: %d", s[6] - 2, s[7]);
-											break;
-									}
-									break;
-							}
+									else
+										switch (s[5])
+										{
+											case 0x00:	// System parameter
+												switch (s[6])
+												{
+													case 0x00:	// Master Tune
+													case 0x02:
+													case 0x03:
+														strcpy(buf, "Master Tune");
+														break;
+													case 0x04:	// Master Volume
+														strcpy(buf, "Master Volume");
+														break;
+													case 0x05:	// Master Key Shift
+														strcpy(buf, "Master Key Shift");
+														break;
+													case 0x06:	// Master Pan
+														strcpy(buf, "Master Pan");
+														break;
+													case 0x7F:	// GS Reset
+														strcpy(buf, "GS Reset");	// F0 41 10 42 12 40 00 7F 00 41 F7
+														break;
+												}
+												break;
+											case 0x01:	// Patch parameter
+												switch (s[6])
+												{
+													case 0x00:	// Patch Name
+														strcpy(buf, "Patch Name: ");
+														j = strlen(buf);
+														for (i = 8; i < len - 2; i++)
+															buf[j++] = s[i];
+														buf[j] = '\0';
+														break;
+													case 0x10:	// Voice Reserve
+														strcpy(buf, "Voice Reserve");
+														break;
+													case 0x30:	// Reverb Macro
+														strcpy(buf, "Reverb Macro: ");
+														switch (s[7])
+														{
+															case 0x00: strcat(buf, "Room 1"); break;
+															case 0x01: strcat(buf, "Room 2"); break;
+															case 0x02: strcat(buf, "Room 3"); break;
+															case 0x03: strcat(buf, "Hall 1"); break;
+															case 0x04: strcat(buf, "Hall 2"); break;
+															case 0x05: strcat(buf, "Plate"); break;
+															case 0x06: strcat(buf, "Delay"); break;
+															case 0x07: strcat(buf, "Panning Delay"); break;
+														}
+														break;
+													case 0x31:	// Reverb Character
+														sprintf(buf, "Reverb Character: %d", s[7]);
+														break;
+													case 0x32:	// Reverb PRE-LPF
+														sprintf(buf, "Reverb PRE-LPF: %d", s[7]);
+														break;
+													case 0x33:	// Reverb Level
+														sprintf(buf, "Reverb Level: %d", s[7]);
+														break;
+													case 0x34:	// Reverb Time
+														sprintf(buf, "Reverb Time: %d", s[7]);
+														break;
+													case 0x35:	// Reverb Delay Feedback
+														sprintf(buf, "Reverb Delay Feedback: %d", s[7]);
+														break;
+													case 0x36:	// Reverb Send to Chorus
+														sprintf(buf, "Reverb Send to Chorus: %d", s[7]);
+														break;
+													case 0x37:	// SC-88 Reverb Pre-Delay Time
+														sprintf(buf, "SC-88 Reverb Pre-Delay Time: %d", s[7]);
+														break;
+													case 0x38:	// Chorus Macro
+														strcpy(buf, "Chorus Macro: ");
+														switch (s[7])
+														{
+															case 0x00: strcat(buf, "Chorus 1"); break;
+															case 0x01: strcat(buf, "Chorus 2"); break;
+															case 0x02: strcat(buf, "Chorus 3"); break;
+															case 0x03: strcat(buf, "Chorus 4"); break;
+															case 0x04: strcat(buf, "Feedback Chorus"); break;
+															case 0x05: strcat(buf, "Flanger"); break;
+															case 0x06: strcat(buf, "Short Delay"); break;
+															case 0x07: strcat(buf, "Short Delay - Feedback"); break;
+														}
+														break;
+													case 0x39:	// Chorus PRE-LPF
+														sprintf(buf, "Chorus PRE-LPF: %d", s[7]);
+														break;
+													case 0x3A:	// Chorus Level
+														sprintf(buf, "Chorus Level: %d", s[7]);
+														break;
+													case 0x3B:	// Chorus Feedback
+														sprintf(buf, "Chorus Feedback: %d", s[7]);
+														break;
+													case 0x3C:	// Chorus Delay
+														sprintf(buf, "Chorus Delay: %d", s[7]);
+														break;
+													case 0x3D:	// Chorus Rate
+														sprintf(buf, "Chorus Rate: %d", s[7]);
+														break;
+													case 0x3E:	// Chorus Depth
+														sprintf(buf, "Chorus Depth: %d", s[7]);
+														break;
+													case 0x3F:	// Chorus Send to Reverb
+														sprintf(buf, "Chorus Send to Reverb: %d", s[7]);
+														break;
+													case 0x40:	// Chorus Send to Delay
+														sprintf(buf, "Chorus Send to Delay: %d", s[7]);
+														break;
+													case 0x50:	// SC-88 Delay Macro
+														strcpy(buf, "SC-88 Delay Macro: ");
+														switch (s[7])
+														{
+															case 0x00: strcat(buf, "Delay 1"); break;
+															case 0x01: strcat(buf, "Delay 2"); break;
+															case 0x02: strcat(buf, "Delay 3"); break;
+															case 0x03: strcat(buf, "Delay 4"); break;
+															case 0x04: strcat(buf, "Pan Delay 1"); break;
+															case 0x05: strcat(buf, "Pan Delay 2"); break;
+															case 0x06: strcat(buf, "Pan Delay 3"); break;
+															case 0x07: strcat(buf, "Pan Delay 4"); break;
+															case 0x08: strcat(buf, "Delay to Reverb"); break;
+															case 0x09: strcat(buf, "Pan Repeat"); break;
+														}
+														break;
+													case 0x51:	// SC-88 Delay PRE-LPF
+														sprintf(buf, "SC-88 Delay PRE-LPF: %d", s[7]);
+														break;
+													case 0x52:	// SC-88 Delay Time Center
+														sprintf(buf, "SC-88 Delay Time Center: %d", s[7]);
+														break;
+													case 0x53:	// SC-88 Delay Time Ratio Left
+														sprintf(buf, "SC-88 Delay Time Ratio Left: %d", s[7]);
+														break;
+													case 0x54:	// SC-88 Delay Time Ratio Right
+														sprintf(buf, "SC-88 Delay Time Ratio Right: %d", s[7]);
+														break;
+													case 0x55:	// SC-88 Delay Level Center
+														sprintf(buf, "SC-88 Delay Level Center: %d", s[7]);
+														break;
+													case 0x56:	// SC-88 Delay Level Left
+														sprintf(buf, "SC-88 Delay Level Left: %d", s[7]);
+														break;
+													case 0x57:	// SC-88 Delay Level Right
+														sprintf(buf, "SC-88 Delay Level Right: %d", s[7]);
+														break;
+													case 0x58:	// SC-88 Delay Level
+														sprintf(buf, "SC-88 Delay Level: %d", s[7]);
+														break;
+													case 0x59:	// SC-88 Delay Feedback
+														sprintf(buf, "SC-88 Delay Feedback: %s%d", s[7] > 0x40 ? "+" : "", s[7] - 0x40);
+														break;
+													case 0x5A:	// SC-88 Send Level to Reverb
+														sprintf(buf, "SC-88 Send Level to Reverb: %d", s[7]);
+														break;
+												}
+												break;
+											case 0x02:	// SC-88 Equalization Parameter
+												switch (s[6])
+												{
+													case 0x00:
+														sprintf(buf, "SC-88 Low Freq. EQ: %d Hz", s[7] ? 200 : 100);
+														break;
+													case 0x01:
+														sprintf(buf, "SC-88 Low Freq. Gain: %s%d db", s[7] >= 0x40 ? "+" : "", s[7] - 0x40);
+														break;
+													case 0x02:
+														sprintf(buf, "SC-88 High Freq. EQ: %d kHz", s[7] ? 8 : 4);
+														break;
+													case 0x03:
+														sprintf(buf, "SC-88 High Freq. Gain: %s%d db", s[7] >= 0x40 ? "+" : "", s[7] - 0x40);
+														break;
+												}
+												break;
+											case 0x03:	// SC-88 Pro EFX Parameter
+												switch (s[6])
+												{
+													case 0x00:
+														sprintf(buf, "SC-88 Pro EFX Type %d/%d", s[7], s[8]);
+														break;
+													default:
+														sprintf(buf, "SC-88 Pro EFX Parameter %d: %d", s[6] - 2, s[7]);
+														break;
+												}
+												break;
+										}
 							break;
 						case 0x41:	// Drum Setup Parameter
 							strcpy(buf, "Drum Setup");
@@ -4650,7 +4651,7 @@ SC88PartParam:
 										j = strlen(buf);
 										for (i = 7; i < len - 2; i++)
 											buf[j++] = s[i];
-										buf[j] = '\0';							
+										buf[j] = '\0';
 									}
 									break;
 								case 0x01:	// Display Dot Letters
@@ -4673,7 +4674,7 @@ SC88PartParam:
 											break;
 										case 0x01:	// Display Page Time
 											sprintf(buf, "Display Page Time: %.2f sec",
-												(float) s[7] / 15.0f * 7.2f);
+												(float)s[7] / 15.0f * 7.2f);
 											break;
 									}
 									break;
@@ -4949,18 +4950,18 @@ SC88PartParam:
 							}
 							break;
 						case 0x06:	// XG Display
-/*							switch (s[5])
-							{
-								case 0x11:	// Displayed Letters
-								case 0x12:	// Displayed Letters
-								case 0x13:	// Displayed Letters*/
-									strcpy(buf, "Displayed Letters: ");
-									j = strlen(buf);
-									for (i = 6; i < len - 1; i++)
-										buf[j++] = s[i];
-									buf[j] = '\0';
-									break;
-//							}
+							/*							switch (s[5])
+														{
+															case 0x11:	// Displayed Letters
+															case 0x12:	// Displayed Letters
+															case 0x13:	// Displayed Letters*/
+							strcpy(buf, "Displayed Letters: ");
+							j = strlen(buf);
+							for (i = 6; i < len - 1; i++)
+								buf[j++] = s[i];
+							buf[j] = '\0';
+							break;
+							//							}
 							break;
 						case 0x08:	// XG Part Parameter
 							sprintf(buf, "Part %d ", s[4] + 1);
@@ -5027,13 +5028,13 @@ SC88PartParam:
 									if (!s[6])
 										strcat(buf, "Random");
 									else
-									if (s[6] < 64)
-										sprintf(&buf[strlen(buf)], "L%d", 64 - s[6]);
-									else
-									if (s[6] == 64)
-										sprintf(&buf[strlen(buf)], "0");
-									else
-										sprintf(&buf[strlen(buf)], "R%d", s[6] - 64);
+										if (s[6] < 64)
+											sprintf(&buf[strlen(buf)], "L%d", 64 - s[6]);
+										else
+											if (s[6] == 64)
+												sprintf(&buf[strlen(buf)], "0");
+											else
+												sprintf(&buf[strlen(buf)], "R%d", s[6] - 64);
 									break;
 								case 0x11:	// Dry Level
 									sprintf(&buf[strlen(buf)], "Dry Level: %d", s[6]);
@@ -5136,15 +5137,15 @@ SC88PartParam:
 			// F0 7F 7F 04 01 00 7F F7		(??  from FF7 MIDI's)
 			// F0H,7FH,7FH,04H,01H,llH,mmH,F7H
 			// F0 7F 7F 04 01 00 7E F7
-			if (s[1] == 0x7F && 
-				s[2] == 0x09 && 
+			if (s[1] == 0x7F &&
+				s[2] == 0x09 &&
 				s[3] == 0x01)
 				strcpy(buf, "GM Reset");
 			else
-			if (s[1] == 0x7F &&
-				s[2] == 0x04 &&
-				s[3] == 0x01)
-				sprintf(buf, "Master Volume: %d", s[5]);
+				if (s[1] == 0x7F &&
+					s[2] == 0x04 &&
+					s[3] == 0x01)
+					sprintf(buf, "Master Volume: %d", s[5]);
 			break;
 	}
 
@@ -5152,7 +5153,7 @@ SC88PartParam:
 }
 
 // Interprets a sysex model ID
-char *interpret_model(unsigned char *s)
+char* interpret_model(unsigned char* s)
 {
 	static char buf[256];
 
@@ -5189,12 +5190,12 @@ char *interpret_model(unsigned char *s)
 	}
 
 	if (!buf[0])
-		sprintf(buf, "0x%02X", (unsigned int) s[2]);
+		sprintf(buf, "0x%02X", (unsigned int)s[2]);
 
 	return buf;
 }
 
-void check_midi_standard(unsigned char *data)
+void check_midi_standard(unsigned char* data)
 {
 	switch (data[0])								// Manufacturer ID
 	{
@@ -5225,7 +5226,7 @@ void check_midi_standard(unsigned char *data)
 }
 
 // Interprets a sysex command ID
-char *interpret_command(unsigned char *s)
+char* interpret_command(unsigned char* s)
 {
 	static char buf[256];
 
@@ -5247,7 +5248,7 @@ char *interpret_command(unsigned char *s)
 	}
 
 	if (!buf[0])
-		sprintf(buf, "0x%02X", (unsigned int) s[3]);
+		sprintf(buf, "0x%02X", (unsigned int)s[3]);
 
 	return buf;
 }
@@ -5264,7 +5265,7 @@ char interpret_sysex_part(unsigned char c)
 	return lo + 1;
 }
 
-char *get_yamaha_effect_name(unsigned char effect)
+char* get_yamaha_effect_name(unsigned char effect)
 {
 	static char buf[64];
 
@@ -5316,9 +5317,9 @@ char *get_yamaha_effect_name(unsigned char effect)
 ////////////// BEGIN TOOLTIP CODE
 
 // DoCreateDialogTooltip - creates a tooltip control for a dialog box, 
-//     enumerates the child control windows, and installs a hook 
-//     procedure to monitor the message stream for mouse messages posted 
-//     to the control windows. 
+//	 enumerates the child control windows, and installs a hook 
+//	 procedure to monitor the message stream for mouse messages posted 
+//	 to the control windows. 
 // Returns TRUE if successful, or FALSE otherwise. 
 // 
 // Global variables 
@@ -5326,120 +5327,120 @@ char *get_yamaha_effect_name(unsigned char effect)
 // g_hwndTT - handle to the tooltip control. 
 // hwndApp - handle to the dialog box. 
 // g_hhk - handle to the hook procedure. 
- 
-BOOL DoCreateDialogTooltip(void) 
-{ 
 
-    // Ensure that the common control DLL is loaded, and create 
-    // a tooltip control. 
-    InitCommonControls(); 
-    g_hwndTT = CreateWindowEx(0, TOOLTIPS_CLASS, (LPSTR) NULL, 
-        TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
-        CW_USEDEFAULT, hwndApp, (HMENU) NULL, ghInstance, NULL); 
- 
-    if (g_hwndTT == NULL) 
-        return FALSE; 
- 
-    // Enumerate the child windows to register them with the tooltip
-    // control. 
-    if (!EnumChildWindows(hwndApp, (WNDENUMPROC) EnumChildProc, 0)) 
-        return FALSE; 
- 
-    // Install a hook procedure to monitor the message stream for mouse 
-    // messages intended for the controls in the dialog box. 
-    g_hhk = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc, 
-        (HINSTANCE) NULL, GetCurrentThreadId()); 
- 
-    if (g_hhk == (HHOOK) NULL) 
-        return FALSE; 
- 
-    return TRUE; 
-} 
- 
+BOOL DoCreateDialogTooltip(void)
+{
+
+	// Ensure that the common control DLL is loaded, and create 
+	// a tooltip control. 
+	InitCommonControls();
+	g_hwndTT = CreateWindowEx(0, TOOLTIPS_CLASS, (LPSTR)NULL,
+		TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		CW_USEDEFAULT, hwndApp, (HMENU)NULL, ghInstance, NULL);
+
+	if (g_hwndTT == NULL)
+		return FALSE;
+
+	// Enumerate the child windows to register them with the tooltip
+	// control. 
+	if (!EnumChildWindows(hwndApp, (WNDENUMPROC)EnumChildProc, 0))
+		return FALSE;
+
+	// Install a hook procedure to monitor the message stream for mouse 
+	// messages intended for the controls in the dialog box. 
+	g_hhk = SetWindowsHookEx(WH_GETMESSAGE, GetMsgProc,
+		(HINSTANCE)NULL, GetCurrentThreadId());
+
+	if (g_hhk == (HHOOK)NULL)
+		return FALSE;
+
+	return TRUE;
+}
+
 // EmumChildProc - registers control windows with a tooltip control by
-//     using the TTM_ADDTOOL message to pass the address of a 
-//     TOOLINFO structure. 
+//	 using the TTM_ADDTOOL message to pass the address of a 
+//	 TOOLINFO structure. 
 // Returns TRUE if successful, or FALSE otherwise. 
 // hwndCtrl - handle of a control window. 
 // lParam - application-defined value (not used). 
-WNDENUMPROC EnumChildProc(HWND hwndCtrl, LPARAM lParam) 
-{ 
-    TOOLINFO ti; 
-    char szClass[64]; 
- 
-    // Skip static controls. 
-    GetClassName(hwndCtrl, szClass, sizeof(szClass)); 
-    if (lstrcmpi(szClass, "STATIC")) { 
-        ti.cbSize = sizeof(TOOLINFO); 
-        ti.uFlags = TTF_IDISHWND; 
-        ti.hwnd = hwndApp; 
-        ti.uId = (UINT) hwndCtrl; 
-        ti.hinst = 0; 
-        ti.lpszText = LPSTR_TEXTCALLBACK; 
-        SendMessage(g_hwndTT, TTM_ADDTOOL, 0, 
-            (LPARAM) (LPTOOLINFO) &ti); 
-    } 
-    //return (int (__stdcall *)(struct HWND__ *,long)) TRUE; 
-	return (WNDENUMPROC) TRUE;
+WNDENUMPROC EnumChildProc(HWND hwndCtrl, LPARAM lParam)
+{
+	TOOLINFO ti;
+	char szClass[64];
+
+	// Skip static controls. 
+	GetClassName(hwndCtrl, szClass, sizeof(szClass));
+	if (lstrcmpi(szClass, "STATIC")) {
+		ti.cbSize = sizeof(TOOLINFO);
+		ti.uFlags = TTF_IDISHWND;
+		ti.hwnd = hwndApp;
+		ti.uId = (UINT)hwndCtrl;
+		ti.hinst = 0;
+		ti.lpszText = LPSTR_TEXTCALLBACK;
+		SendMessage(g_hwndTT, TTM_ADDTOOL, 0,
+			(LPARAM)(LPTOOLINFO)&ti);
+	}
+	//return (int (__stdcall *)(struct HWND__ *,long)) TRUE; 
+	return (WNDENUMPROC)TRUE;
 }
- 
+
 // GetMsgProc - monitors the message stream for mouse messages intended 
-//     for a control window in the dialog box. 
+//	 for a control window in the dialog box. 
 // Returns a message-dependent value. 
 // nCode - hook code. 
 // wParam - message flag (not used). 
 // lParam - address of an MSG structure. 
-LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam) 
-{ 
-    MSG *lpmsg; 
- 
-    lpmsg = (MSG *) lParam; 
-    if (nCode < 0 || !(IsChild(hwndApp, lpmsg->hwnd))) 
-        return (CallNextHookEx(g_hhk, nCode, wParam, lParam)); 
- 
-    switch (lpmsg->message) { 
-        case WM_MOUSEMOVE: 
-        case WM_LBUTTONDOWN: 
-        case WM_LBUTTONUP: 
-        case WM_RBUTTONDOWN: 
-        case WM_RBUTTONUP: 
-            if (g_hwndTT != NULL) { 
-                MSG msg; 
- 
-                msg.lParam = lpmsg->lParam; 
-                msg.wParam = lpmsg->wParam; 
-                msg.message = lpmsg->message; 
-                msg.hwnd = lpmsg->hwnd; 
-                SendMessage(g_hwndTT, TTM_RELAYEVENT, 0, 
-                    (LPARAM) (LPMSG) &msg); 
-            } 
-            break; 
-        default: 
-            break; 
-    } 
-    return (CallNextHookEx(g_hhk, nCode, wParam, lParam)); 
-} 
- 
+LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+	MSG* lpmsg;
+
+	lpmsg = (MSG*)lParam;
+	if (nCode < 0 || !(IsChild(hwndApp, lpmsg->hwnd)))
+		return (CallNextHookEx(g_hhk, nCode, wParam, lParam));
+
+	switch (lpmsg->message) {
+		case WM_MOUSEMOVE:
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+			if (g_hwndTT != NULL) {
+				MSG msg;
+
+				msg.lParam = lpmsg->lParam;
+				msg.wParam = lpmsg->wParam;
+				msg.message = lpmsg->message;
+				msg.hwnd = lpmsg->hwnd;
+				SendMessage(g_hwndTT, TTM_RELAYEVENT, 0,
+					(LPARAM)(LPMSG)&msg);
+			}
+			break;
+		default:
+			break;
+	}
+	return (CallNextHookEx(g_hhk, nCode, wParam, lParam));
+}
+
 // OnWMNotify - provides the tooltip control with the appropriate text 
-//     to display for a control window. This function is called by 
-//     the dialog box procedure in response to a WM_NOTIFY message. 
+//	 to display for a control window. This function is called by 
+//	 the dialog box procedure in response to a WM_NOTIFY message. 
 // lParam - second message parameter of the WM_NOTIFY message. 
-VOID OnWMNotify(LPARAM lParam) 
-{ 
-    LPTOOLTIPTEXT lpttt; 
-    int idCtrl; 
- 
-    if ((((LPNMHDR) lParam)->code) == TTN_NEEDTEXT) { 
-        idCtrl = GetDlgCtrlID((HWND) ((LPNMHDR) lParam)->idFrom); 
-        lpttt = (LPTOOLTIPTEXT) lParam; 
- 
-        switch (idCtrl)
+VOID OnWMNotify(LPARAM lParam)
+{
+	LPTOOLTIPTEXT lpttt;
+	int idCtrl;
+
+	if ((((LPNMHDR)lParam)->code) == TTN_NEEDTEXT) {
+		idCtrl = GetDlgCtrlID((HWND)((LPNMHDR)lParam)->idFrom);
+		lpttt = (LPTOOLTIPTEXT)lParam;
+
+		switch (idCtrl)
 		{
-            case IDC_MIDI_OUT:
-                lpttt->lpszText = "Bite me!";
-                break;
-        }
-    }
+			case IDC_MIDI_OUT:
+				lpttt->lpszText = "Bite me!";
+				break;
+		}
+	}
 	return;
 }
 
@@ -5455,11 +5456,11 @@ void CleanupTooltip(void)
 
 // Case insensitive string search - finds target in src, returns 
 // pointer to beginning of match or NULL if no match found
-char *stristr(char *src, char *target)
+char* stristr(char* src, char* target)
 {
-	char *found = NULL;	// pointer to beginning of matched string
-	char *sp;			// search pointer
-	char *tp;			// target pointer
+	char* found = NULL;	// pointer to beginning of matched string
+	char* sp;			// search pointer
+	char* tp;			// target pointer
 
 	// We don't like null pointers
 	if (!src || !target)
@@ -5504,10 +5505,10 @@ char *stristr(char *src, char *target)
 }
 
 // Dumps the given file directly to the MIDI-out device
-int handle_sysex_dump(FILE *fp)
+int handle_sysex_dump(FILE* fp)
 {
 	MIDIHDR mh;
-	char *buf;
+	char* buf;
 	char text[MAX_PATH];
 	int filelen, i;
 	double startTime, endTime, timelen, speed;
@@ -5521,7 +5522,7 @@ int handle_sysex_dump(FILE *fp)
 		MessageBox(hwndApp, "Sysex file is empty!", "TMIDI Error", MB_ICONERROR);
 		return 1;
 	}
-	buf = (char *) malloc(filelen + 1);
+	buf = (char*)malloc(filelen + 1);
 	fread(buf, filelen, 1, fp);
 	fclose(fp);
 
@@ -5567,8 +5568,8 @@ int handle_sysex_dump(FILE *fp)
 	if (timelen == 0.0f)
 		speed = 0.0f;
 	else
-		speed = (double) filelen / timelen;
-	sprintf(text, "Finished sending %s (%d bytes) in %.1f seconds (%.0f bytes per second)", 
+		speed = (double)filelen / timelen;
+	sprintf(text, "Finished sending %s (%d bytes) in %.1f seconds (%.0f bytes per second)",
 		extract_filename(ms.filename), filelen, timelen, speed);
 	SetWindowText(hwndStatusBar, text);
 
@@ -5578,9 +5579,9 @@ int handle_sysex_dump(FILE *fp)
 	return 0;
 }
 
-char *extract_filename(char *filename)
+char* extract_filename(char* filename)
 {
-	char *ch = strrchr(filename, '\\');
+	char* ch = strrchr(filename, '\\');
 	if (ch)
 		return ch + 1;
 	else
@@ -5588,13 +5589,13 @@ char *extract_filename(char *filename)
 }
 
 // Interprets patch memory sysex for the MT-32
-void interpret_mt32_patch_memory(unsigned char *s, int len)
+void interpret_mt32_patch_memory(unsigned char* s, int len)
 {
 	int addr;
-	unsigned char *p = s + 7;
+	unsigned char* p = s + 7;
 	unsigned char ch, group, num;
 	int patch;
-	FILE *fp;
+	FILE* fp;
 
 	//fp = fopen("k:\\projects\\tmidi\\patchmem.txt", "a");
 	addr = (s[5] << 7) | s[6];
@@ -5620,18 +5621,18 @@ void interpret_mt32_patch_memory(unsigned char *s, int len)
 		//fprintf(fp, " Program number: %d\n", group == 1 ? num + 64 : num);
 		mt32_patch_programs[patch] = group == 1 ? num + 64 : num;
 		ch = *p++;
-		//fprintf(fp, "      Key shift: %d\n", (signed int) ch - 24);
+		//fprintf(fp, "	  Key shift: %d\n", (signed int) ch - 24);
 		ch = *p++;
-		//fprintf(fp, "      Fine tune: %d\n", (signed int) ch - 50);
+		//fprintf(fp, "	  Fine tune: %d\n", (signed int) ch - 50);
 		ch = *p++;
 		//fprintf(fp, "   Bender range: %d\n", ch);
 		ch = *p++;
-		//fprintf(fp, "    Assign mode: Poly %d\n", ch + 1);
+		//fprintf(fp, "	Assign mode: Poly %d\n", ch + 1);
 		ch = *p++;
 		//fprintf(fp, "  Reverb switch: %s\n", ch ? "On" : "Off");
 		ch = *p++;
-		//fprintf(fp, "          Dummy: %d\n", ch);
-		
+		//fprintf(fp, "		  Dummy: %d\n", ch);
+
 		addr += 8;
 	}
 
@@ -5639,13 +5640,13 @@ void interpret_mt32_patch_memory(unsigned char *s, int len)
 }
 
 // Interprets timbre memory sysex for the MT-32
-void interpret_mt32_timbre_memory(unsigned char *s, int len)
+void interpret_mt32_timbre_memory(unsigned char* s, int len)
 {
 	int timbre;
 
 	timbre = s[5] / 2;
 	mt32_memory_names[timbre][0] = '\0';
-	strncat(mt32_memory_names[timbre], (char *) &s[7], 10);
+	strncat(mt32_memory_names[timbre], (char*)&s[7], 10);
 }
 
 // Initializes MT-32 state values on program startup
@@ -5659,7 +5660,7 @@ void init_mt32_state(void)
 			mt32_patch_groups[i] = 0;
 		else
 			mt32_patch_groups[i] = 1;
-		mt32_patch_programs[i] = (char) i;
+		mt32_patch_programs[i] = (char)i;
 	}
 
 	for (i = 0; i < 64; i++)
@@ -5668,7 +5669,7 @@ void init_mt32_state(void)
 
 // Returns a program name, given a program number, taking into account 
 // current mode of operation and state values.
-char *get_program_name(unsigned char program, unsigned char bank)
+char* get_program_name(unsigned char program, unsigned char bank)
 {
 	static char name[256];
 
@@ -5728,25 +5729,25 @@ char *get_program_name(unsigned char program, unsigned char bank)
 // Dialog for output device configuration window
 INT_PTR CALLBACK OutConfigDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
-	midi_device_t *dev;
+	midi_device_t* dev;
 	static HWND hwndLB = NULL;
-	static midi_device_t **devs = NULL;
+	static midi_device_t** devs = NULL;
 	int i = 0;
 	char buf[256];
-	
+
 	switch (iMsg)
 	{
 		case WM_INITDIALOG:
 		{
 			hwndLB = GetDlgItem(hDlg, IDC_OUT_DEV_LIST);
-			
+
 			// Count the # of devices
 			i = 0;
 			for (dev = midi_devices; dev; dev = dev->next)
 				if (!dev->input_device)
 					i++;
 			// Allocate a static array of device pointers
-			devs = (midi_device_t **) malloc(sizeof(midi_device_t *) * i);
+			devs = (midi_device_t**)malloc(sizeof(midi_device_t*) * i);
 			// Add the devices to the list box
 			i = 0;
 			for (dev = midi_devices; dev; dev = dev->next)
@@ -5754,7 +5755,7 @@ INT_PTR CALLBACK OutConfigDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
 				if (!dev->input_device)
 				{
 					devs[i++] = dev;
-					SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM) dev->user_device_name);
+					SendMessage(hwndLB, LB_ADDSTRING, 0, (LPARAM)dev->user_device_name);
 				}
 			}
 
@@ -5779,7 +5780,7 @@ INT_PTR CALLBACK OutConfigDlg(HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam
 						CheckDlgButton(hDlg, IDC_USABLE, dev->usable);
 						sprintf(buf, "%d", dev->outcaps.wMid);
 						SetDlgItemText(hDlg, IDC_DEV_MANUFACTURER, buf);
-						sprintf(buf, "%d (driver v%d.%d)", dev->outcaps.wPid, 
+						sprintf(buf, "%d (driver v%d.%d)", dev->outcaps.wPid,
 							HIBYTE(dev->outcaps.vDriverVersion), LOBYTE(dev->outcaps.vDriverVersion));
 						SetDlgItemText(hDlg, IDC_DEV_ID, buf);
 						switch (dev->outcaps.wTechnology)
@@ -5820,11 +5821,11 @@ void init_gdi_resources(void)
 	hNoteBackgroundBrush = CreateSolidBrush(RGB(fg, fg, fg));
 	hControllerBrush = CreateSolidBrush(RGB(bg, bg, bg));
 
-    hControllerFont = CreateFont(12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial");
+	hControllerFont = CreateFont(12, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "Arial");
 
-/*    hJapaneseFont = CreateFont(16, 0, 0, 0, FW_NORMAL, 0, 0, 0, SHIFTJIS_CHARSET, 
-        OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "MS Gothic");*/
+	/*	hJapaneseFont = CreateFont(16, 0, 0, 0, FW_NORMAL, 0, 0, 0, SHIFTJIS_CHARSET,
+			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, "MS Gothic");*/
 }
 
 void free_gdi_resources(void)
@@ -5833,7 +5834,7 @@ void free_gdi_resources(void)
 	DeleteObject(hNoteBackgroundBrush);
 	DeleteObject(hControllerBrush);
 	DeleteObject(hControllerFont);
-//	DeleteObject(hJapaneseFont);
+	//	DeleteObject(hJapaneseFont);
 }
 
 // Handles a click or mouse movement in the main window
@@ -5920,7 +5921,7 @@ int get_clicked_channel(int x, int y)
 	// Loop through the channels
 	for (i = 0; i < 16; i++)
 		// See if the mouse is in this channel bar
-		if (x > BAR_X - 1 && x < BAR_X + BAR_WIDTH + 1 && 
+		if (x > BAR_X - 1 && x < BAR_X + BAR_WIDTH + 1 &&
 			y > BAR_Y + i * BAR_VSPACE && y < BAR_Y + i * BAR_VSPACE + BAR_HEIGHT)
 			return i;
 
@@ -5935,8 +5936,8 @@ void handle_controller_bar_popup(int x, int y, int channel)
 	MENUITEMINFO mii;
 	char buf[256];
 	int i, v;
-	char *ch;
-	channel_state_t *c;
+	char* ch;
+	channel_state_t* c;
 
 	// Grab a pointer to the channel state for this channel for easy reference
 	c = &ms.channels[channel];
@@ -5947,7 +5948,7 @@ void handle_controller_bar_popup(int x, int y, int channel)
 
 	// Create a submenu for ALL controller names
 	cmenu = CreatePopupMenu();
-	for (i = 0; i < sizeof(controller_names) / sizeof(char *); i++)
+	for (i = 0; i < sizeof(controller_names) / sizeof(char*); i++)
 	{
 		if (strcmp(controller_names[i], "Unknown controller"))
 		{
@@ -5984,10 +5985,10 @@ void handle_controller_bar_popup(int x, int y, int channel)
 	// Insert last used controller if it's not a common controller and there is one
 	if (c->last_controller != -1)
 	{
-		for (i = 0; i < sizeof(common_controller_names) / sizeof(char *); i++)
+		for (i = 0; i < sizeof(common_controller_names) / sizeof(char*); i++)
 			if (atoi(common_controller_names[i]) == c->last_controller)
 				break;
-		if (i == sizeof(common_controller_names) / sizeof(char *))
+		if (i == sizeof(common_controller_names) / sizeof(char*))
 		{
 			mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
 			mii.fState = MFS_DEFAULT;
@@ -5999,7 +6000,7 @@ void handle_controller_bar_popup(int x, int y, int channel)
 		}
 	}
 	// Insert COMMON controller names
-	for (i = 0; i < sizeof(common_controller_names) / sizeof(char *); i++)
+	for (i = 0; i < sizeof(common_controller_names) / sizeof(char*); i++)
 	{
 		ch = strchr(common_controller_names[i], '-');
 		mii.fMask = MIIM_ID | MIIM_TYPE;
@@ -6079,15 +6080,15 @@ void handle_controller_bar_popup(int x, int y, int channel)
 }
 
 // Copies the given string to the clipboard
-void copy_to_clipboard(char *str)
+void copy_to_clipboard(char* str)
 {
 	HANDLE hClipdata;
-	char *clipdata;
+	char* clipdata;
 
 	// Allocate enough memory to store the sysex data in text format
 	hClipdata = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, strlen(str) + 2);
 	// Lock the memory
-	clipdata = (char *) GlobalLock(hClipdata);
+	clipdata = (char*)GlobalLock(hClipdata);
 	if (clipdata)
 	{
 		// Copy the given string into it
