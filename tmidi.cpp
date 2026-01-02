@@ -985,7 +985,7 @@ void close_midi_out(void)
 
 void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsigned char chan)
 {
-	DWORD dwParam1;
+	uint32_t dwParam1;
 	signed int i;
 	unsigned char channel = chan;
 
@@ -1018,8 +1018,12 @@ void note_on(unsigned char on, unsigned char note, unsigned char velocity, unsig
 	if (ms.midi_standard == MIDI_STANDARD_XG && ms.channels[channel].last_bank == 127) [[unlikely]]
 		channel = 9;
 
-	dwParam1 = MAKELONG(MAKEWORD(MAKEBYTE(channel, on ? 9 : 8), note), MAKEWORD(velocity, 0));
-	if (hout)
+	dwParam1 =
+		(uint32_t(channel | ((on ? 9 : 8) << 4)))
+		| (uint32_t(note) << 8)
+		| (uint32_t(velocity) << 16);
+
+	if (hout) [[likely]]
 		kShortMsg(dwParam1);
 }
 
@@ -2433,7 +2437,7 @@ int process_midi_event(track_header_t* th)
 				d2 = read_byte_mem(th);
 				if (!ms.analyzing)
 				{
-					note_on(FALSE, d1, d2, channel);
+					note_on(false, d1, d2, channel);
 					//kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 					/*sprintf(buf, "Note off, d1 = %d, d2 = %d\n", d1, d2);
 					SetDlgItemText(hwndApp, IDC_FILENAME, buf);
@@ -2448,7 +2452,7 @@ int process_midi_event(track_header_t* th)
 				{
 					th->last_note_pitch = d1;
 					th->last_note_velocity = d2;
-					note_on(TRUE, d1, d2, channel);
+					note_on(true, d1, d2, channel);
 					//kShortMsg(MAKELONG(MAKEWORD(cmd, d1), MAKEWORD(d2, 0)));
 					/*sprintf(buf, "Note on, d1 = %d, d2 = %d\n", d1, d2);
 					SetDlgItemText(hwndApp, IDC_FILENAME, buf);
