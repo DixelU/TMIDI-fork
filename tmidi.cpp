@@ -1491,7 +1491,7 @@ struct steady_clock_fast
 // returns MILLISECONDS 
 inline double GetHRTickCount(void)
 {
-	constexpr bool use_winapi = false;
+	constexpr bool use_winapi = true;
 
 	if (use_winapi)
 	{
@@ -1799,7 +1799,11 @@ void deferred_gui_update_call()
 		// Set song position slider
 		SendDlgItemMessage(hwndApp, IDC_SONG_SLIDER, TBM_SETPOS, TRUE, global_state.elapsed);
 
-		sprintf(buf, "%.2f ms/tick, %.0f bpm", ms.tick_length, 60000000.0f / ms.tempo);
+		auto print_value = 60000000.0f / ms.tempo;
+		const char* suffix = print_value > 10000 ? "k" : "\0";
+		print_value = print_value > 10000 ? print_value / 1000 : print_value;
+
+		sprintf(buf, "%.2f ms/tick, %.0f%s bpm", ms.tick_length, print_value, suffix);
 		SetDlgItemText(hwndApp, IDC_TEMPO, buf);
 		SendDlgItemMessage(hwndApp, IDC_TEMPO_SLIDER, TBM_SETPOS, TRUE, (int)(60000000.0f / ms.tempo));
 	}
@@ -2027,7 +2031,7 @@ void __cdecl playback_thread(void* spointer)
 					th[i].trigger = curtime + th[i].dt;
 				}
 
-				curtime = GetHRTickCount();
+				// curtime = GetHRTickCount();
 
 				// Process MIDI events until one is scheduled for a time in the future
 				while (curtime >= th[i].trigger)
@@ -2103,7 +2107,8 @@ void __cdecl playback_thread(void* spointer)
 				global_state.seeking = true;
 				curtime = nexttrigger;
 				// See if the seek is done
-				if (seeking && (curtime - starttime >= ms.seek_to))
+				auto time = curtime - starttime;
+				if (seeking && (time >= ms.seek_to))
 				{
 					// Seek is done - correct timing values
 					tmptime = curtime;
